@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Any-Key.[click!] — Каталог микро-сервисов и калькуляторов</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #161e2e;
+            --card-hover: #1e293b;
+            --border: #27354a;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --cyan: #06b6d4;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-weight: 600;
+        }
+
+        /* Hero banner */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto 24px;
+            line-height: 1.5;
+        }
+
+        .search-box {
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* App Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card:hover {
+            background: var(--card-hover);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-marketing { background: rgba(6, 182, 212, 0.15); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+        .tag-3d { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .tag-finance { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .app-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            margin-bottom: 20px;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .app-card:hover .card-footer {
+            color: #a5b4fc;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <a href="#" class="logo">Any-Key.<span>[click!]</span></a>
+        <span class="badge">Indie App Suite 2026</span>
+    </header>
+
+    <div class="hero">
+        <h1>Каталог веб-инструментов</h1>
+        <p>Автономные одностраничные приложения для маркетинга, 3D-печати и юнит-экономики бизнеса.</p>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск инструмента (UTM, 3D, воронка)...">
+        </div>
+    </div>
+
+    <div class="grid" id="appsGrid">
+        <!-- Карточка 1: UTM Builder -->
+        <a href="utm.html" class="app-card" data-keywords="utm метки маркетинг ссылки qr код генератор">
+            <div>
+                <div class="card-header">
+                    <div class="icon-wrapper">⚡</div>
+                    <span class="tag tag-marketing">Маркетинг</span>
+                </div>
+                <div class="app-title">UTM Builder</div>
+                <div class="app-desc">Генератор UTM-меток с пресетами для Яндекс Директ, VK, Telegram и встроенной сборкой QR-кодов.</div>
+            </div>
+            <div class="card-footer">
+                <span>Открыть сервис</span>
+                <span>→</span>
+            </div>
+        </a>
+
+        <!-- Карточка 2: 3D Signage Builder -->
+        <a href="3dcalc.html" class="app-card" data-keywords="3d печать объемные буквы вывеска расчет petg калькулятор">
+            <div>
+                <div class="card-header">
+                    <div class="icon-wrapper">👁️</div>
+                    <span class="tag tag-3d">3D & Производство</span>
+                </div>
+                <div class="app-title">3D Signage Builder</div>
+                <div class="app-desc">3D-визуализатор и калькулятор объемных букв. Расчет пластика PETG, LED-подсветки, времени печати и экспорт ТЗ/SVG.</div>
+            </div>
+            <div class="card-footer">
+                <span>Открыть сервис</span>
+                <span>→</span>
+            </div>
+        </a>
+
+        <!-- Карточка 3: Sales Funnel Decomposer -->
+        <a href="funmel.html" class="app-card" data-keywords="воронка продаж декомпозиция конверсия cpl cac romi юнит экономика">
+            <div>
+                <div class="card-header">
+                    <div class="icon-wrapper">📉</div>
+                    <span class="tag tag-finance">Бизнес & Финансы</span>
+                </div>
+                <div class="app-title">Funnel Decomposer</div>
+                <div class="app-desc">Калькулятор декомпозиции воронки продаж и юнит-экономики. Расчет "от цели" или "от бюджета" с метриками CPL, CAC и ROMI.</div>
+            </div>
+            <div class="card-footer">
+                <span>Открыть сервис</span>
+                <span>→</span>
+            </div>
+        </a>
+    </div>
+
+    <footer>
+        <p>© 2026 Any-Key.[click!] — Инди-разработка приложений без тяжелых фреймворков.</p>
+    </footer>
+</div>
+
+<script>
+    // Живой поиск по карточкам
+    const searchInput = document.getElementById('searchInput');
+    const appCards = document.querySelectorAll('.app-card');
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        appCards.forEach(card => {
+            const keywords = card.getAttribute('data-keywords').toLowerCase();
+            const title = card.querySelector('.app-title').textContent.toLowerCase();
+            const desc = card.querySelector('.app-desc').textContent.toLowerCase();
+
+            if (keywords.includes(query) || title.includes(query) || desc.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
