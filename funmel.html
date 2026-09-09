@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Any-Key.[click!] — Калькулятор декомпозиции воронки продаж</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #161e2e;
+            --border: #27354a;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --cyan: #06b6d4;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-weight: 600;
+        }
+
+        /* Mode Switcher */
+        .mode-switcher {
+            display: flex;
+            background: #0f172a;
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        .presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 880px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .unit {
+            position: absolute;
+            right: 14px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        /* Funnel Visualizer */
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .funnel-stage {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .funnel-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: rgba(99, 102, 241, 0.15);
+            border-right: 3px solid var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .funnel-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .funnel-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .funnel-val {
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        .metric-value.emerald { color: var(--emerald); }
+        .metric-value.cyan { color: var(--cyan); }
+        .metric-value.amber { color: var(--amber); }
+        .metric-value.rose { color: var(--rose); }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--emerald);
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <header>
+        <div class="logo">Any-Key.<span>[click!]</span></div>
+        <span class="badge">Sales Funnel Decomposer v1.0</span>
+    </header>
+
+    <!-- Переключатель логики воронки -->
+    <div class="mode-switcher">
+        <button class="mode-btn active" id="btnModeReverse" onclick="setMode('reverse')">🎯 От цели (Обратная декомпозиция)</button>
+        <button class="mode-btn" id="btnModeDirect" onclick="setMode('direct')">💰 От бюджета (Прямой расчет)</button>
+    </div>
+
+    <!-- Быстрые шаблоны бизнеса -->
+    <div class="presets">
+        <span style="font-size: 0.8rem; color: var(--text-muted); align-self: center;">Быстрые ниши:</span>
+        <button class="preset-btn" onclick="applyPreset('services')">💼 Услуги / B2B</button>
+        <button class="preset-btn" onclick="applyPreset('ecomm')">🛒 Интернет-магазин</button>
+        <button class="preset-btn" onclick="applyPreset('infobiz')">🎓 Курсы / Инфобиз</button>
+        <button class="preset-btn" onclick="applyPreset('realestate')">🏢 Недвижимость</button>
+    </div>
+
+    <div class="main-grid">
+        <!-- Ввод данных -->
+        <div class="card">
+            <div class="card-title">📊 Входные параметры</div>
+
+            <!-- Поле меняется в зависимости от режима -->
+            <div class="form-group" id="groupMainGoal">
+                <label id="lblMainGoal">Желаемая выручка</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpMainGoal" value="1000000" step="50000">
+                    <span class="unit" id="unitMainGoal">₽</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Средний чек сделки (AOV)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpAvgCheck" value="50000" step="1000">
+                    <span class="unit">₽</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Маржинальность (без учета рекламы)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpMargin" value="50" min="1" max="100">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Конверсия сайта / Лендинга (CR1: Клики ➔ Лиды)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpCrSite" value="3.5" step="0.1">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Конверсия продаж (CR2: Лиды ➔ Сделки)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpCrSales" value="12" step="0.5">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Стоимость клика / перехода (CPC)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="inpCpc" value="45" step="1">
+                    <span class="unit">₽</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Визуализация воронки и финансовые итоги -->
+        <div class="card">
+            <div class="card-title">📉 Воронка & Юнит-экономика</div>
+
+            <!-- Визуальные бары воронки -->
+            <div class="funnel-container">
+                <div class="funnel-stage">
+                    <div class="funnel-bar" id="barVisits" style="width: 100%;"></div>
+                    <div class="funnel-content">
+                        <span class="funnel-name">1. Посетители / Клики</span>
+                        <span class="funnel-val" id="valVisits">0</span>
+                    </div>
+                </div>
+
+                <div class="funnel-stage">
+                    <div class="funnel-bar" id="barLeads" style="width: 70%;"></div>
+                    <div class="funnel-content">
+                        <span class="funnel-name">2. Заявки / Лиды (CR1)</span>
+                        <span class="funnel-val" id="valLeads">0</span>
+                    </div>
+                </div>
+
+                <div class="funnel-stage">
+                    <div class="funnel-bar" id="barDeals" style="width: 40%;"></div>
+                    <div class="funnel-content">
+                        <span class="funnel-name">3. Продажи / Сделки (CR2)</span>
+                        <span class="funnel-val" id="valDeals">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Метрики расходов и прибыли -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Необходимый рекламный бюджет</div>
+                    <div class="metric-value amber" id="mBudget">0 ₽</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Стоимость лида (CPL)</div>
+                    <div class="metric-value cyan" id="mCpl">0 ₽</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Стоимость клиента (CAC/CPA)</div>
+                    <div class="metric-value cyan" id="mCac">0 ₽</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Итоговая Выручка</div>
+                    <div class="metric-value" id="mRevenue">0 ₽</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Чистая прибыль (EBITDA)</div>
+                    <div class="metric-value emerald" id="mNetProfit">0 ₽</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Окупаемость рекламы (ROMI)</div>
+                    <div class="metric-value emerald" id="mRomi">0%</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="copyReport()">📋 Скопировать отчет воронки</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Отчет декомпозиции скопирован!</div>
+
+<script>
+    let currentMode = 'reverse'; // 'reverse' или 'direct'
+
+    const inpMainGoal = document.getElementById('inpMainGoal');
+    const inpAvgCheck = document.getElementById('inpAvgCheck');
+    const inpMargin = document.getElementById('inpMargin');
+    const inpCrSite = document.getElementById('inpCrSite');
+    const inpCrSales = document.getElementById('inpCrSales');
+    const inpCpc = document.getElementById('inpCpc');
+
+    const lblMainGoal = document.getElementById('lblMainGoal');
+    const unitMainGoal = document.getElementById('unitMainGoal');
+
+    // Funnel Visuals
+    const barVisits = document.getElementById('barVisits');
+    const barLeads = document.getElementById('barLeads');
+    const barDeals = document.getElementById('barDeals');
+
+    const valVisits = document.getElementById('valVisits');
+    const valLeads = document.getElementById('valLeads');
+    const valDeals = document.getElementById('valDeals');
+
+    // Metrics
+    const mBudget = document.getElementById('mBudget');
+    const mCpl = document.getElementById('mCpl');
+    const mCac = document.getElementById('mCac');
+    const mRevenue = document.getElementById('mRevenue');
+    const mNetProfit = document.getElementById('mNetProfit');
+    const mRomi = document.getElementById('mRomi');
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btnModeReverse').classList.toggle('active', mode === 'reverse');
+        document.getElementById('btnModeDirect').classList.toggle('active', mode === 'direct');
+
+        if (mode === 'reverse') {
+            lblMainGoal.textContent = 'Желаемая выручка';
+            unitMainGoal.textContent = '₽';
+            if (inpMainGoal.value < 10000) inpMainGoal.value = 1000000;
+        } else {
+            lblMainGoal.textContent = 'Выделенный рекламный бюджет';
+            unitMainGoal.textContent = '₽';
+            if (inpMainGoal.value > 500000) inpMainGoal.value = 100000;
+        }
+        calculate();
+    }
+
+    function applyPreset(type) {
+        if (type === 'services') {
+            inpAvgCheck.value = 80000;
+            inpMargin.value = 60;
+            inpCrSite.value = 2.5;
+            inpCrSales.value = 15;
+            inpCpc.value = 70;
+        } else if (type === 'ecomm') {
+            inpAvgCheck.value = 4500;
+            inpMargin.value = 35;
+            inpCrSite.value = 1.8;
+            inpCrSales.value = 85; // На сайте сразу покупка
+            inpCpc.value = 22;
+        } else if (type === 'infobiz') {
+            inpAvgCheck.value = 18000;
+            inpMargin.value = 80;
+            inpCrSite.value = 5.0;
+            inpCrSales.value = 8;
+            inpCpc.value = 35;
+        } else if (type === 'realestate') {
+            inpAvgCheck.value = 350000;
+            inpMargin.value = 75;
+            inpCrSite.value = 1.2;
+            inpCrSales.value = 5;
+            inpCpc.value = 180;
+        }
+        calculate();
+    }
+
+    function calculate() {
+        const goalVal = parseFloat(inpMainGoal.value) || 0;
+        const avgCheck = parseFloat(inpAvgCheck.value) || 1;
+        const marginPct = (parseFloat(inpMargin.value) || 0) / 100;
+        const crSitePct = (parseFloat(inpCrSite.value) || 0) / 100;
+        const crSalesPct = (parseFloat(inpCrSales.value) || 0) / 100;
+        const cpc = parseFloat(inpCpc.value) || 1;
+
+        let visits = 0, leads = 0, deals = 0, budget = 0, revenue = 0;
+
+        if (currentMode === 'reverse') {
+            // От желаемой выручки к трафику
+            revenue = goalVal;
+            deals = Math.ceil(revenue / avgCheck);
+            leads = crSalesPct > 0 ? Math.ceil(deals / crSalesPct) : 0;
+            visits = crSitePct > 0 ? Math.ceil(leads / crSitePct) : 0;
+            budget = visits * cpc;
+        } else {
+            // От бюджета к прибыли
+            budget = goalVal;
+            visits = Math.floor(budget / cpc);
+            leads = Math.floor(visits * crSitePct);
+            deals = Math.floor(leads * crSalesPct);
+            revenue = deals * avgCheck;
+        }
+
+        const cpl = leads > 0 ? Math.round(budget / leads) : 0;
+        const cac = deals > 0 ? Math.round(budget / deals) : 0;
+        const grossProfit = revenue * marginPct;
+        const netProfit = grossProfit - budget;
+        const romi = budget > 0 ? Math.round((netProfit / budget) * 100) : 0;
+
+        // Рендер воронки
+        valVisits.textContent = visits.toLocaleString('ru-RU');
+        valLeads.textContent = leads.toLocaleString('ru-RU');
+        valDeals.textContent = deals.toLocaleString('ru-RU');
+
+        // Ширина баров воронки относительно кликов
+        barVisits.style.width = '100%';
+        barLeads.style.width = visits > 0 ? Math.max(8, (leads / visits) * 100) + '%' : '0%';
+        barDeals.style.width = visits > 0 ? Math.max(5, (deals / visits) * 100) + '%' : '0%';
+
+        // Метрики
+        mBudget.textContent = Math.round(budget).toLocaleString('ru-RU') + ' ₽';
+        mCpl.textContent = cpl.toLocaleString('ru-RU') + ' ₽';
+        mCac.textContent = cac.toLocaleString('ru-RU') + ' ₽';
+        mRevenue.textContent = Math.round(revenue).toLocaleString('ru-RU') + ' ₽';
+        mNetProfit.textContent = Math.round(netProfit).toLocaleString('ru-RU') + ' ₽';
+        mRomi.textContent = romi + '%';
+
+        // Подсветка отрицательной прибыли
+        if (netProfit < 0) {
+            mNetProfit.className = 'metric-value rose';
+            mRomi.className = 'metric-value rose';
+        } else {
+            mNetProfit.className = 'metric-value emerald';
+            mRomi.className = 'metric-value emerald';
+        }
+    }
+
+    [inpMainGoal, inpAvgCheck, inpMargin, inpCrSite, inpCrSales, inpCpc].forEach(el => {
+        el.addEventListener('input', calculate);
+    });
+
+    function copyReport() {
+        const modeText = currentMode === 'reverse' ? 'От цели (Выручка)' : 'От рекламного бюджета';
+        const report = `=== ДЕКОМПОЗИЦИЯ ВОРОНКИ ПРОДАЖ (Any-Key.[click!]) ===
+Режим расчета: ${modeText}
+-------------------------------------------
+1. Посетители / Клики: ${valVisits.textContent} чел. (CPC: ${inpCpc.value} ₽)
+2. Заявки / Лиды: ${valLeads.textContent} шт. (CR1: ${inpCrSite.value}%)
+3. Продажи / Сделки: ${valDeals.textContent} шт. (CR2: ${inpCrSales.value}%)
+-------------------------------------------
+Рекламный бюджет: ${mBudget.textContent}
+Стоимость лида (CPL): ${mCpl.textContent}
+Стоимость клиента (CAC): ${mCac.textContent}
+-------------------------------------------
+Выручка: ${mRevenue.textContent} (Средний чек: ${inpAvgCheck.value} ₽)
+Чистая прибыль: ${mNetProfit.textContent} (Маржа: ${inpMargin.value}%)
+Окупаемость (ROMI): ${mRomi.textContent}`;
+
+        navigator.clipboard.writeText(report).then(() => {
+            showToast('Отчет воронки скопирован!');
+        });
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    calculate();
+</script>
+
+</body>
+</html>
