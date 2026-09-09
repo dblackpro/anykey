@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM Builder — Быстрый генератор UTM-меток</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: #312e81;
+            color: #a5b4fc;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            border: 1px solid #4338ca;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        label span {
+            color: #ef4444;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .presets {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .preset-btn {
+            background: #334155;
+            border: none;
+            color: var(--text);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary);
+        }
+
+        .result-box {
+            margin-top: 24px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-url {
+            word-break: break-all;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            color: #38bdf8;
+            min-height: 24px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .qr-container {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .qr-container img {
+            border-radius: 8px;
+            background: white;
+            padding: 8px;
+            max-width: 150px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: #000;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>⚡ UTM Builder</h1>
+        <span class="badge">Indie Tool v1.0</span>
+    </header>
+
+    <div class="form-group">
+        <label>Целевая ссылка (URL) <span>*</span></label>
+        <input type="text" id="baseUrl" placeholder="https://example.com/landing">
+    </div>
+
+    <!-- Быстрые пресеты -->
+    <div class="form-group">
+        <label>Быстрые шаблоны источников:</label>
+        <div class="presets">
+            <button class="preset-btn" onclick="setPreset('yandex', 'cpc')">Яндекс Директ</button>
+            <button class="preset-btn" onclick="setPreset('vk', 'cpc')">VK Ads</button>
+            <button class="preset-btn" onclick="setPreset('telegram', 'post')">Telegram</button>
+            <button class="preset-btn" onclick="setPreset('newsletter', 'email')">Email Рассылка</button>
+            <button class="preset-btn" onclick="setPreset('youtube', 'video')">YouTube</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="form-group">
+            <label>Источник (utm_source) <span>*</span></label>
+            <input type="text" id="utmSource" placeholder="yandex, google, vk">
+        </div>
+        <div class="form-group">
+            <label>Канал (utm_medium) <span>*</span></label>
+            <input type="text" id="utmMedium" placeholder="cpc, email, banner">
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="form-group">
+            <label>Кампания (utm_campaign)</label>
+            <input type="text" id="utmCampaign" placeholder="spring_sale">
+        </div>
+        <div class="form-group">
+            <label>Содержание (utm_content)</label>
+            <input type="text" id="utmContent" placeholder="banner_v1">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Ключевое слово (utm_term)</label>
+        <input type="text" id="utmTerm" placeholder="купить_кроссовки">
+    </div>
+
+    <!-- Результат -->
+    <div class="result-box">
+        <div class="result-title">Итоговая ссылка</div>
+        <div class="result-url" id="resultUrl">Введите ссылку выше...</div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-primary" onclick="copyResult()">📋 Скопировать</button>
+        <button class="btn btn-secondary" onclick="toggleQR()">📱 QR-код</button>
+    </div>
+
+    <div class="qr-container" id="qrContainer">
+        <img id="qrImg" src="" alt="QR Code">
+    </div>
+</div>
+
+<div class="toast" id="toast">Ссылка скопирована!</div>
+
+<script>
+    const inputs = ['baseUrl', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm'];
+    
+    // Автообновление при вводе
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', generateUrl);
+    });
+
+    function generateUrl() {
+        let base = document.getElementById('baseUrl').value.trim();
+        const resultEl = document.getElementById('resultUrl');
+
+        if (!base) {
+            resultEl.textContent = 'Введите адрес сайта выше...';
+            updateQR('');
+            return;
+        }
+
+        // Подставляем https:// если пользователь забыл protocol
+        if (!/^https?:\/\//i.test(base)) {
+            base = 'https://' + base;
+        }
+
+        try {
+            const url = new URL(base);
+
+            const source = document.getElementById('utmSource').value.trim();
+            const medium = document.getElementById('utmMedium').value.trim();
+            const campaign = document.getElementById('utmCampaign').value.trim();
+            const content = document.getElementById('utmContent').value.trim();
+            const term = document.getElementById('utmTerm').value.trim();
+
+            if (source) url.searchParams.set('utm_source', source);
+            if (medium) url.searchParams.set('utm_medium', medium);
+            if (campaign) url.searchParams.set('utm_campaign', campaign);
+            if (content) url.searchParams.set('utm_content', content);
+            if (term) url.searchParams.set('utm_term', term);
+
+            const finalUrl = url.toString();
+            resultEl.textContent = finalUrl;
+            updateQR(finalUrl);
+
+        } catch (e) {
+            resultEl.textContent = 'Некорректный формат URL';
+        }
+    }
+
+    function setPreset(source, medium) {
+        document.getElementById('utmSource').value = source;
+        document.getElementById('utmMedium').value = medium;
+        generateUrl();
+    }
+
+    function copyResult() {
+        const text = document.getElementById('resultUrl').textContent;
+        if (!text || text.startsWith('Введите') || text.startsWith('Некорректный')) return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Скопировано в буфер!');
+        }).catch(() => {
+            showToast('Ошибка при копировании');
+        });
+    }
+
+    function toggleQR() {
+        const container = document.getElementById('qrContainer');
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+        } else {
+            container.style.display = 'block';
+        }
+    }
+
+    function updateQR(url) {
+        const img = document.getElementById('qrImg');
+        if (url && !url.startsWith('Введите') && !url.startsWith('Некорректный')) {
+            img.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+        } else {
+            img.src = '';
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+</script>
+
+</body>
+</html>
