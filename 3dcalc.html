@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Any-Key.[click!] — Калькулятор и 3D-визуализатор объемных букв</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #161e2e;
+            --border: #27354a;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --cyan: #06b6d4;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-weight: 600;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 860px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        label .val-tag {
+            color: var(--cyan);
+            font-family: monospace;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .color-pickers {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .color-item {
+            text-align: center;
+        }
+
+        .color-item label {
+            font-size: 0.75rem;
+            justify-content: center;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: 1px solid var(--border);
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+        }
+
+        /* 3D Preview Stage */
+        .stage-container {
+            background: #070a12;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            perspective: 800px;
+        }
+
+        .stage-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .text-preview {
+            position: relative;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1;
+            user-select: none;
+            transition: all 0.2s ease;
+            letter-spacing: 2px;
+            z-index: 2;
+            word-break: break-word;
+            padding: 0 10px;
+        }
+
+        /* Calculated Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        .metric-value.highlight {
+            color: var(--accent-green);
+        }
+
+        .metric-value.cyan {
+            color: var(--cyan);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <header>
+        <div class="logo">Any-Key.<span>[click!]</span></div>
+        <span class="badge">3D Signage & Letter Studio v1.0</span>
+    </header>
+
+    <div class="main-grid">
+        <!-- Левая колонка: Настройки макета -->
+        <div class="card">
+            <div class="card-title">⚙️ Параметры вывески</div>
+
+            <div class="form-group">
+                <label>Текст вывески</label>
+                <input type="text" id="textInput" value="ANY-KEY" placeholder="Введите текст...">
+            </div>
+
+            <div class="form-group">
+                <label>Шрифт 3D-букв</label>
+                <select id="fontSelect">
+                    <option value="Arial, sans-serif">Modern Clean (Sans-Serif)</option>
+                    <option value="'Impact', sans-serif">Bold Impact (Массивный)</option>
+                    <option value="'Courier New', monospace">Tech Mono (Техно)</option>
+                    <option value="'Georgia', serif">Classic Serif (Строгий)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Высота буквы: <span class="val-tag" id="heightVal">15 см</span></label>
+                <input type="range" id="heightRange" min="5" max="50" value="15" step="1">
+            </div>
+
+            <div class="form-group">
+                <label>Глубина борта (3D-печать): <span class="val-tag" id="depthVal">5 см</span></label>
+                <input type="range" id="depthRange" min="2" max="15" value="5" step="1">
+            </div>
+
+            <div class="form-group">
+                <label>Тип подсветки</label>
+                <select id="lightingSelect">
+                    <option value="front">Лицевая светодиодная подсветка</option>
+                    <option value="back">Контражур (Заднее свечение на стену)</option>
+                    <option value="full">Комбинированная (Лицо + Контражур)</option>
+                    <option value="none">Без подсветки (Объемный пластик)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Цветовая гамма</label>
+                <div class="color-pickers">
+                    <div class="color-item">
+                        <label>Лицо</label>
+                        <input type="color" id="faceColor" value="#ffffff">
+                    </div>
+                    <div class="color-item">
+                        <label>Борт (5см)</label>
+                        <input type="color" id="sideColor" value="#4f46e5">
+                    </div>
+                    <div class="color-item">
+                        <label>Свечение</label>
+                        <input type="color" id="glowColor" value="#06b6d4">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка: 3D-Превью и Расчет -->
+        <div class="card">
+            <div class="card-title">👁️ 3D-Предпросмотр & Расчет</div>
+
+            <div class="stage-container">
+                <div class="stage-bg-grid"></div>
+                <div class="text-preview" id="textPreview">ANY-KEY</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Габариты вывески</div>
+                    <div class="metric-value cyan" id="mSize">0 х 0 см</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Периметр борта (для печати)</div>
+                    <div class="metric-value" id="mPerimeter">0 м</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Расход пластика (PETG)</div>
+                    <div class="metric-value" id="mWeight">0 г</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Время 3D-печати (~принтер)</div>
+                    <div class="metric-value" id="mPrintTime">0 ч</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Мощность LED / Блок питания</div>
+                    <div class="metric-value" id="mPower">0 Вт</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Примерная стоимость</div>
+                    <div class="metric-value highlight" id="mPrice">0 ₽</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="copySpec()">📋 Скопировать ТЗ</button>
+                <button class="btn btn-secondary" onclick="downloadSVG()">📥 Скачать SVG</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Техническое задание скопировано!</div>
+
+<script>
+    // Элементы управления
+    const textInput = document.getElementById('textInput');
+    const fontSelect = document.getElementById('fontSelect');
+    const heightRange = document.getElementById('heightRange');
+    const depthRange = document.getElementById('depthRange');
+    const lightingSelect = document.getElementById('lightingSelect');
+    const faceColor = document.getElementById('faceColor');
+    const sideColor = document.getElementById('sideColor');
+    const glowColor = document.getElementById('glowColor');
+
+    const textPreview = document.getElementById('textPreview');
+    const heightVal = document.getElementById('heightVal');
+    const depthVal = document.getElementById('depthVal');
+
+    // Метрики
+    const mSize = document.getElementById('mSize');
+    const mPerimeter = document.getElementById('mPerimeter');
+    const mWeight = document.getElementById('mWeight');
+    const mPrintTime = document.getElementById('mPrintTime');
+    const mPower = document.getElementById('mPower');
+    const mPrice = document.getElementById('mPrice');
+
+    function updateAll() {
+        const text = textInput.value.trim() || "ANY-KEY";
+        const font = fontSelect.value;
+        const heightCm = parseInt(heightRange.value);
+        const depthCm = parseInt(depthRange.value);
+        const lighting = lightingSelect.value;
+
+        const cFace = faceColor.value;
+        const cSide = sideColor.value;
+        const cGlow = glowColor.value;
+
+        // 1. Обновляем текстовые метки слайдеров
+        heightVal.textContent = heightCm + ' см';
+        depthVal.textContent = depthCm + ' см';
+
+        // 2. Обновляем 3D Визуализацию
+        textPreview.textContent = text;
+        textPreview.style.fontFamily = font;
+        textPreview.style.color = cFace;
+
+        // Генерируем многослойную 3D-тень для создания эффекта борта в 5 см
+        const depthPx = Math.round(depthCm * 1.5);
+        let shadowCSS = [];
+        
+        for (let i = 1; i <= depthPx; i++) {
+            shadowCSS.push(`${i}px ${i}px 0px ${cSide}`);
+        }
+
+        // Добавляем эффект свечения светодиодов
+        if (lighting === 'front' || lighting === 'full') {
+            shadowCSS.push(`0px 0px 15px ${cGlow}`);
+            shadowCSS.push(`0px 0px 25px ${cGlow}`);
+        }
+        if (lighting === 'back' || lighting === 'full') {
+            shadowCSS.push(`${depthPx + 5}px ${depthPx + 5}px 20px ${cGlow}`);
+            shadowCSS.push(`${depthPx + 10}px ${depthPx + 10}px 30px ${cGlow}`);
+        }
+
+        textPreview.style.textShadow = shadowCSS.join(', ');
+
+        // Динамический размер шрифта в предпросмотре
+        const fontSizePx = Math.min(60, Math.max(22, 180 / Math.max(text.length, 5)));
+        textPreview.style.fontSize = fontSizePx + 'px';
+
+        // 3. Математический расчет параметров
+        const charCount = text.replace(/\s+/g, '').length;
+        if (charCount === 0) return;
+
+        // Средняя ширина буквы ~ 0.75 от высоты
+        const totalWidthCm = Math.round(charCount * (heightCm * 0.75));
+        mSize.textContent = `${totalWidthCm} х ${heightCm} см`;
+
+        // Средний периметр буквы ~ 3.6 от высоты
+        const perimeterMeters = ((charCount * (heightCm * 3.6)) / 100).toFixed(2);
+        mPerimeter.textContent = `${perimeterMeters} м`;
+
+        // Расчет объема пластика PETG (бортик толщиной 1.6мм + лицо 2мм)
+        // Площадь лица + Площадь борта
+        const faceAreaCm2 = charCount * (heightCm * heightCm * 0.45);
+        const sideAreaCm2 = (perimeterMeters * 100) * depthCm;
+        const volumeCm3 = (faceAreaCm2 * 0.2) + (sideAreaCm2 * 0.16); // толщина стенки
+        const weightGrams = Math.round(volumeCm3 * 1.27); // плотность PETG ~ 1.27 г/см3
+        mWeight.textContent = `${weightGrams} г`;
+
+        // Время 3D-печати (~25г в час на 3D-принтере)
+        const printHours = Math.round(weightGrams / 25);
+        mPrintTime.textContent = `~ ${printHours} ч`;
+
+        // Расчет LED и питания
+        let powerWatts = 0;
+        if (lighting !== 'none') {
+            const ledMeters = perimeterMeters * (lighting === 'full' ? 1.6 : 0.8);
+            powerWatts = Math.round(ledMeters * 14.4 * 1.25); // 14.4 Вт/м + 25% запас БП
+            mPower.textContent = `${powerWatts} Вт (${ledMeters.toFixed(1)}м ленты)`;
+        } else {
+            mPower.textContent = 'Не требуется';
+        }
+
+        // Ориентировочная стоимость (Пластик + LED + Сборка)
+        const materialCost = weightGrams * 3.5; // ~3.5 руб/грамм
+        const ledCost = powerWatts * 15;
+        const baseCost = charCount * 300;
+        const totalPrice = Math.round(materialCost + ledCost + baseCost + 500);
+        mPrice.textContent = `${totalPrice.toLocaleString('ru-RU')} ₽`;
+    }
+
+    // Привязываем события
+    [textInput, fontSelect, heightRange, depthRange, lightingSelect, faceColor, sideColor, glowColor].forEach(el => {
+        el.addEventListener('input', updateAll);
+    });
+
+    // Функция копирования ТЗ
+    function copySpec() {
+        const text = textInput.value.trim() || "ANY-KEY";
+        const spec = `=== ТЕХНИЧЕСКОЕ ЗАДАНИЕ (Any-Key.[click!]) ===
+Текст вывески: ${text}
+Габариты: ${mSize.textContent} (Глубина борта: ${depthRange.value} см)
+Шрифт: ${fontSelect.options[fontSelect.selectedIndex].text}
+Тип подсветки: ${lightingSelect.options[lightingSelect.selectedIndex].text}
+-------------------------------------------
+Периметр борта для 3D-печати: ${mPerimeter.textContent}
+Ориентировочный вес PETG: ${mWeight.textContent}
+Время 3D-печати: ${mPrintTime.textContent}
+Блок питания / LED: ${mPower.textContent}
+Расчетная стоимость: ${mPrice.textContent}
+-------------------------------------------
+Цвета: Лицо (${faceColor.value}), Борт (${sideColor.value}), Свечение (${glowColor.value})`;
+
+        navigator.clipboard.writeText(spec).then(() => {
+            showToast('ТЗ скопировано в буфер обмена!');
+        });
+    }
+
+    // Функция скачивания векторного SVG макета
+    function downloadSVG() {
+        const text = textInput.value.trim() || "ANY-KEY";
+        const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+  <rect width="100%" height="100%" fill="#0b0f19"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" 
+        font-family="${fontSelect.value.replace(/"/g, "'")}" 
+        font-size="72" font-weight="bold" fill="${faceColor.value}" 
+        stroke="${sideColor.value}" stroke-width="2">
+    ${text}
+  </text>
+</svg>`;
+
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `anykey_letters_${text.toLowerCase()}.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('SVG макет скачан!');
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Первичный расчет при загрузке
+    updateAll();
+</script>
+
+</body>
+</html>
