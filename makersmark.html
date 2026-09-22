@@ -1,765 +1,248 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Any-Key.[click!] — Векторный генератор 3D-штампов 24x24 мм</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#0f172a',
-                        cardBg: '#1e293b',
-                        accent: '#0284c7',
-                        accentHover: '#0369a1'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- OrbitControls -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Создай свой штамп — Any-Key.[click!]</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1120;--panel:#182337;--edge:#35445b;--blue:#38bdf8;--muted:#a8bad0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f8fafc;font:16px system-ui,-apple-system,"Segoe UI",sans-serif;padding:18px 12px;min-height:100dvh}header,footer{text-align:center}header a{color:inherit;text-decoration:none}.brand{display:inline-flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.03em;font-size:22px}.brand b{background:var(--blue);color:#07131e;padding:3px 9px;border-radius:5px;font-size:13px}h1{font-size:clamp(19px,4vw,25px);margin:13px 0 5px}header p,.hint,footer{color:var(--muted);font-size:13px}main{display:grid;grid-template-columns:repeat(2,minmax(0,360px));gap:15px;justify-content:center;max-width:1120px;margin:19px auto}.panel{background:var(--panel);border:1px solid var(--edge);border-radius:17px;padding:15px;min-width:0}h2{font-size:17px;margin:0 0 12px}.switch,.tools{display:flex;gap:7px;justify-content:center;margin-bottom:12px}.switch button,.tools button,.small{background:#0e1728;color:#e2e8f0;border:1px solid var(--edge);border-radius:9px;padding:10px 12px;min-height:43px;font:inherit;cursor:pointer}.switch button{flex:1}.tools button{flex:1;min-width:0;font-size:11px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px 3px}.tools button svg{width:22px;height:22px;stroke-width:2}.tools button span{white-space:nowrap}.switch button.active,.tools button.active{background:#0369a1;border-color:var(--blue);color:white}.tools{border-top:1px solid var(--edge);padding-top:14px;margin-top:14px;background:#111b2b;border-radius:10px;padding:12px 6px}.drawing{width:100%;aspect-ratio:1;background:#fff;border-radius:9px;overflow:hidden;position:relative}.drawing.circle{border-radius:50%}#draw{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}#viewer{width:100%;aspect-ratio:1;background:#080f1c;border-radius:9px;overflow:hidden;touch-action:none}#viewer canvas{display:block;width:100%;height:100%}.cursor-eraser{position:absolute;pointer-events:none;border-radius:50%;background:rgba(255,220,0,.35);border:1px solid #eab308;transform:translate(-50%,-50%);display:none;z-index:3}.note{font-size:12px;color:var(--muted);line-height:1.5}.modal{position:fixed;inset:0;background:#000b;z-index:20;display:none;align-items:center;justify-content:center;padding:12px}.modal.open{display:flex}.dialog{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:20px;width:min(100%,540px);max-height:94dvh;overflow:auto}.dialog h2{margin:0 0 12px}.dialog ol{padding-left:22px;font-size:14px;line-height:1.65}.dialog p{line-height:1.5}.dialog .actions{margin-top:15px}.stamp-photo{display:block;max-width:100%;object-fit:contain;margin:12px auto;border-radius:10px}.dialog a{color:var(--blue)}.dialog .price{font-size:18px}.dialog li{margin-bottom:5px}.cursor-bucket{cursor:crosshair!important}.hint{text-align:center;line-height:1.5;margin:9px 0 12px}.actions{display:flex;flex-direction:column;gap:9px}.primary{background:#0284c7;border:0;border-radius:10px;color:white;font-size:16px;font-weight:750;padding:14px;min-height:49px;cursor:pointer}.primary:disabled{opacity:.5;cursor:wait}.small{font-size:14px}#status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}footer{margin:19px auto}footer a{color:var(--blue)}button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}@media(max-width:640px){main{grid-template-columns:minmax(0,420px);margin:13px auto}.panel{padding:12px}body{padding:12px 10px}.brand{font-size:20px}}
+
+header p{max-width:690px;margin:8px auto 0;line-height:1.45}.switch button{display:flex;align-items:center;justify-content:center;gap:8px}.switch button svg{width:21px;height:21px;stroke-width:2}.preview-switch .letter-icon,.preview-switch .mirror-label{display:inline-block;font-weight:800;font-size:19px;line-height:1}.preview-switch .mirror-label{transform:scaleX(-1)}.modal-close{float:right;width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--edge);border-radius:9px;background:#0e1728;color:white;cursor:pointer;margin:0 0 10px 10px}.modal-close svg{width:21px;height:21px}.dialog h2{padding-right:42px}.dialog h3{margin:18px 0 6px}.dialog ul{padding-left:22px;font-size:14px;line-height:1.7}.dialog{scrollbar-width:thin}.stamp-photo{}footer a{text-decoration:none}footer a:hover{text-decoration:underline}
+
+/* Окно заказа: светлая карточка и выразительные ценовые акценты. */
+.dialog{position:relative;background:#fff;color:#182337;border:1px solid #e2e8f0;box-shadow:0 24px 80px #0008;width:min(100%,560px);padding:24px;line-height:1.5}
+.dialog h2{font-size:clamp(21px,4vw,27px);line-height:1.16;margin-bottom:15px}
+.dialog h3{color:#172337;font-size:17px;margin-top:18px}
+.dialog p,.dialog li{font-size:14px;line-height:1.55}
+.dialog a{color:#0369a1;font-weight:700}
+.dialog .stamp-photo{width:100%;object-fit:contain;background:#f1f5f9;border-radius:10px;padding:8px}
+.dialog .modal-close{position:sticky;top:0;float:right;z-index:2;background:#f1f5f9;color:#172337;border-color:#cbd5e1;margin:-8px -8px 8px 8px}
+.dialog .care{background:#e4f2ff;color:#07518b;border-radius:10px;padding:12px 14px}
+.dialog .price-card{background:#fff1d8;border-radius:12px;padding:15px;margin-top:16px}
+.dialog .price-card h3{margin-top:0}.dialog .price-card p:last-child{margin-bottom:0}
+@media(max-width:640px){.dialog{padding:17px}.dialog .stamp-photo{}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TeapotGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipper-lib@6.4.2/clipper.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
-<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-accent selection:text-white">
+<body>
+<header><h1>Создайте свой уникальный штамп!</h1><p>Индивидуальное рельефное клеймо мастера для художественных изделий из пластичной массы</p></header>
+<main><section class="panel"><h2>1. Нарисуйте</h2><div class="switch"><button id="square" class="active" type="button"><i data-lucide="square"></i><span>Квадрат</span></button><button id="circle" type="button"><i data-lucide="circle"></i><span>Круг</span></button></div><div class="drawing" id="drawing"><canvas id="draw" width="600" height="600" aria-label="Поле рисования"></canvas><div class="cursor-eraser" id="eraserCursor"></div></div><div class="tools"><button id="pen" class="active" title="Карандаш" aria-label="Карандаш"><i data-lucide="pencil"></i><span>Рисовать</span></button><button id="eraser" title="Ластик" aria-label="Ластик"><i data-lucide="eraser"></i><span>Ластик</span></button><button id="fill" title="Заливка" aria-label="Заливка"><i data-lucide="paint-bucket"></i><span>Заливка</span></button><button id="undo" title="Отменить" aria-label="Отменить"><i data-lucide="undo-2"></i><span>Отмена</span></button><button id="redo" title="Вернуть отменённое действие" aria-label="Вернуть отменённое действие"><i data-lucide="redo-2"></i><span>Вперёд</span></button><button id="clear" title="Очистить всё" aria-label="Очистить всё"><i data-lucide="trash-2"></i><span>Очистить</span></button></div><p class="hint">Рисуйте пальцем или мышкой. Используйте ведёрко для сплошной заливки.</p></section>
+<section class="panel"><h2>2. Посмотрите</h2><div class="switch preview-switch"><button id="stampView" type="button" class="active"><span class="mirror-label">аА</span><span>Штамп</span></button><button id="imprintView" type="button"><span class="letter-icon">Аа</span><span>Оттиск</span></button></div><div id="viewer" aria-label="Интерактивный трёхмерный просмотр штампа"></div><p class="hint">Вращайте модель пальцем или мышкой. Увеличивайте двумя пальцами или колёсиком.</p><div class="actions"><button class="primary" id="download" type="button">3. Скачайте STL для 3D-печати</button><button class="small" id="order" type="button">... или заказажите изготовление под ключ</button></div><div id="status" role="status" aria-live="polite"></div></section></main>
+<div class="modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderTitle" aria-hidden="true"><div class="dialog"><button class="modal-close" id="closeModal" type="button" aria-label="Закрыть окно заказа"><i data-lucide="x"></i></button><h2 id="orderTitle">Сделайте своё творчество индивидуальным!</h2><img class="stamp-photo" src="img/stamp.jpg" alt="Штамп с удобной ручкой и защитной крышечкой" onerror="this.style.display='none'"><p>Штамп изготавливается из прочного пластика методом 3D-печати. Размер штампа — 2 × 2 см. Подходит для нанесения рельефных оттисков на материалы для творчества: полимерную и керамическую глину, пластилин, тесто для моделирования и другие пластичные массы.</p><p class="care">Можно мыть под проточной водой с мылом. Не используйте химические и органические растворители, не нагревайте выше 40 °C и не давайте маленьким детям.</p><p>Для заказа скачайте STL и отправьте его на <a href="mailto:print@printer-printing.ru">print@printer-printing.ru</a>. Укажите контакты для обратной связи и адрес постамата в ближайшем магазине «Пятёрочка» (город, улица, номер дома).</p><h3>Как оформить заказ</h3><ol><li>Отправьте письмо с STL-моделью штампа. Если моделей несколько, прикрепите их к одному письму.</li><li>Дождитесь подтверждения по электронной почте в течение 24 часов (проверьте папку «Спам»).</li><li>Оплатите заказ и доставку онлайн по ссылке в письме.</li><li>Мы изготовим и отправим штамп в течение двух рабочих дней.</li><li>Заберите заказ в постамате в ближайшей «Пятёрочке».</li></ol><div class="price-card"><h3>Цены</h3><p>Изготовление штампа:</p><ul><li>Круглый — <strong>300 ₽</strong></li><li>Квадратный — <strong>350 ₽</strong></li><li><strong>При заказе нескольких штампов — скидка 20%!</strong></li></ul><p><strong>Удобная ручка и защитная крышечка в подарок!</strong></p><p>Доставка в постамат 5Post — от 185 ₽. Итоговая стоимость доставки зависит от вашего региона.</p></div></div></div>
+<footer><a href="https://dblackpro.github.io/anykey/index.html">© 2026 Any-Key.[click!]</a></footer>
+<script>
+'use strict';
+// Координаты редактора — миллиметры; растровая сетка используется только для отображения, не для 3D.
+const SIZE=20, BASE=3, RELIEF=2.4, WIDTH=.55, SCALE=10000, INSET=.12;
+const canvas=document.getElementById('draw'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+// Точка курсора — на капле под носиком ведёрка (9, 29), а не в центре значка.
+// Та же Lucide paint-bucket, что на кнопке; горячая точка — капля справа внизу.
+const bucketSvg=`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g transform="translate(2 2) scale(1.17)" fill="none" stroke="#111827" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0L19 11Z" fill="#fff"/><path d="m5 2 5 5"/><path d="M22 13a2 2 0 1 1-4 0c0-1.6 2-3.5 2-3.5s2 1.9 2 3.5Z" fill="#38bdf8"/></g></svg>`;
+const bucketCursor=`url("data:image/svg+xml,${encodeURIComponent(bucketSvg)}") 25 19, pointer`;
 
-    <!-- Any-Key Branding Header -->
-    <header class="bg-cardBg/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 bg-[#1e293b] px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
-                    <span class="font-bold text-sm text-[#38bdf8] tracking-wider">Any-Key</span>
-                    <span class="bg-[#0284c7] text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">CLICK!</span>
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm leading-tight text-slate-200">Векторный генератор штампов 24×24 мм</h1>
-                    <p class="text-[11px] text-slate-400">Плавные линии без пиксельных артефактов</p>
-                </div>
-            </div>
-            <!-- Steps Tabs -->
-            <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs font-medium" id="stepTabs">
-                <button onclick="switchTab(1)" id="tabBtn1" class="px-3 py-1.5 rounded-lg transition-all bg-accent text-white shadow">1. Ввод</button>
-                <button onclick="switchTab(2)" id="tabBtn2" class="px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">2. Векторизация</button>
-                <button onclick="switchTab(3)" id="tabBtn3" class="px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">3. 3D Просмотр</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Left Column: Controls & Steps -->
-        <div class="lg:col-span-5 flex flex-col gap-6">
-
-            <!-- STEP 1: INPUT SOURCE -->
-            <div id="step1" class="bg-cardBg border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h2 class="font-semibold text-sm flex items-center gap-2 text-slate-200">
-                        <span class="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center font-bold">1</span>
-                        Рукописный ввод или скан
-                    </h2>
-                    <span class="text-xs text-slate-400">Шаг 1 из 3</span>
-                </div>
-
-                <!-- Mode toggle -->
-                <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
-                    <button id="modeDrawBtn" onclick="setMode('draw')" class="py-2 text-xs font-medium rounded-lg bg-accent text-white transition">Рисовать пером</button>
-                    <button id="modeUploadBtn" onclick="setMode('upload')" class="py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-white transition">Загрузить файл</button>
-                </div>
-
-                <!-- Draw Area -->
-                <div id="drawContainer" class="flex flex-col gap-2">
-                    <p class="text-xs text-slate-400">Напишите подпись плавной кистью:</p>
-                    <div class="relative border-2 border-dashed border-slate-700 rounded-xl overflow-hidden bg-white touch-none shadow-inner">
-                        <canvas id="sketchCanvas" class="w-full h-48 cursor-crosshair"></canvas>
-                        <div class="absolute bottom-2 right-2 flex gap-1">
-                            <button onclick="clearSketch()" class="px-2.5 py-1 text-xs bg-red-600 hover:bg-red-500 text-white rounded font-medium transition shadow"><i class="fa-solid fa-eraser mr-1"></i> Очистить</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upload Area -->
-                <div id="uploadContainer" class="hidden flex flex-col gap-2">
-                    <p class="text-xs text-slate-400">Загрузите скан подписи или логотипа (PNG, JPG, WEBP):</p>
-                    <label class="border-2 border-dashed border-slate-700 hover:border-accent rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-900/40 hover:bg-slate-900/80 transition group">
-                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition text-accent">
-                            <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-                        </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-white">Выберите файл изображения</span>
-                        <input type="file" id="imageLoader" accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden">
-                    </label>
-                </div>
-
-                <button onclick="processAndMoveToStep2()" class="w-full py-3 bg-accent hover:bg-accentHover font-semibold text-xs rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center justify-center gap-2 mt-2">
-                    <span>Далее: Векторизация линий</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </div>
-
-            <!-- STEP 2: VECTORIZATION & PARAMETERS -->
-            <div id="step2" class="hidden bg-cardBg border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h2 class="font-semibold text-sm flex items-center gap-2 text-slate-200">
-                        <span class="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center font-bold">2</span>
-                        Настройки вектора и штампа
-                    </h2>
-                    <span class="text-xs text-slate-400">Шаг 2 из 3</span>
-                </div>
-
-                <!-- Vector SVG preview -->
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs text-slate-400 flex justify-between">
-                        <span>Сглаженный векторный контур</span>
-                        <span id="vectorStats" class="text-slate-500 font-mono">0 контуров</span>
-                    </label>
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2 flex items-center justify-center h-40 overflow-hidden relative">
-                        <svg id="vectorPreviewSvg" class="w-full h-full" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
-                            <rect width="300" height="300" fill="#030712"/>
-                            <g id="svgPathsGroup"></g>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Controls for vectorization & geometry -->
-                <div class="flex flex-col gap-3 text-xs">
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-slate-300 font-medium">Порог черно-белого (Threshold)</span>
-                            <span id="thresholdVal" class="text-accent font-bold">140</span>
-                        </div>
-                        <input type="range" id="thresholdRange" min="50" max="230" value="140" oninput="updateVectorization()" class="w-full accent-accent bg-slate-800 h-2 rounded-lg appearance-none cursor-pointer">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="flex items-center gap-2 cursor-pointer bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 hover:border-slate-700 transition">
-                            <input type="checkbox" id="mirrorCheck" checked onchange="updateVectorization()" class="rounded bg-slate-800 border-slate-700 text-accent focus:ring-0 w-4 h-4">
-                            <span class="text-slate-300 font-medium">Зеркально (для оттиска)</span>
-                        </label>
-                        <div class="flex flex-col gap-1">
-                            <span class="text-slate-300 font-medium">Основа штампа</span>
-                            <select id="stampShape" onchange="updateVectorization()" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-accent">
-                                <option value="square">Квадрат 24×24 мм</option>
-                                <option value="circle">Круг 24 мм</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800">
-                        <div>
-                            <span class="text-slate-300 font-medium block mb-1">Высота рельефа (мм)</span>
-                            <input type="number" id="reliefHeight" value="2.4" min="0.5" max="5" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 text-xs focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <span class="text-slate-300 font-medium block mb-1">Толщина основы (мм)</span>
-                            <input type="number" id="baseThickness" value="3.0" min="1" max="10" step="0.5" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 text-xs focus:outline-none focus:border-accent">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-2 mt-2">
-                    <button onclick="switchTab(1)" class="w-1/3 py-2.5 bg-slate-800 hover:bg-slate-700 font-semibold text-xs rounded-xl transition">Назад</button>
-                    <button onclick="build3DAndMoveToStep3()" class="w-2/3 py-2.5 bg-accent hover:bg-accentHover font-semibold text-xs rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center justify-center gap-2">
-                        <span>Создать 3D модель</span>
-                        <i class="fa-solid fa-cube text-xs"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- STEP 3: EXPORT STL -->
-            <div id="step3" class="hidden bg-cardBg border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h2 class="font-semibold text-sm flex items-center gap-2 text-slate-200">
-                        <span class="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center font-bold">3</span>
-                        Экспорт STL
-                    </h2>
-                    <span class="text-xs text-slate-400">Шаг 3 из 3</span>
-                </div>
-
-                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2 text-xs text-slate-300">
-                    <div class="flex justify-between"><span>Размер основы:</span> <span class="font-semibold text-white">24 × 24 мм</span></div>
-                    <div class="flex justify-between"><span>Мин. толщина линии:</span> <span class="font-semibold text-white">0.6 мм</span></div>
-                    <div class="flex justify-between"><span>Треугольников STL:</span> <span id="statTriangles" class="font-semibold text-white">-</span></div>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <button onclick="downloadSTL()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Скачать STL файл (24×24 мм)</span>
-                    </button>
-                    <button onclick="switchTab(2)" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl transition">Изменить вектор</button>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Right Column: Interactive 3D Canvas Preview -->
-        <div class="lg:col-span-7 bg-cardBg border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col relative min-h-[480px] lg:min-h-[620px]">
-            <div class="absolute top-6 left-6 z-10 flex items-center gap-2 bg-slate-900/80 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-800 text-xs shadow">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-slate-300 font-medium">3D Предпросмотр (Основа: серый, Рельеф: синий)</span>
-            </div>
-
-            <!-- Loading overlay -->
-            <div id="loadingOverlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-3 rounded-2xl hidden">
-                <div class="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-xs font-medium text-slate-300">Построение гладких векторных линий...</p>
-            </div>
-
-            <div id="canvas3dContainer" class="w-full flex-1 rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 relative"></div>
-
-            <div class="flex items-center justify-between mt-3 text-xs text-slate-400 px-1">
-                <span><i class="fa-solid fa-circle-info mr-1 text-accent"></i> Вращайте мышкой для осмотра штампа</span>
-                <button onclick="resetCamera()" class="hover:text-white underline">Сбросить ракурс</button>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800/80 mt-auto">
-        Any-Key.[click!] &bull; Векторный генератор штампов 24×24 мм &bull; Высота рельефа 2.4 мм
-    </footer>
-
-    <script>
-        let currentMode = 'draw';
-        let sourceImage = null;
-        let vectorPolylines = [];
-        let generatedSTL = '';
-
-        const sketchCanvas = document.getElementById('sketchCanvas');
-        const sketchCtx = sketchCanvas.getContext('2d');
-        let isDrawing = false;
-        let lastX = 0, lastY = 0;
-
-        let scene, camera, renderer, controls, stampGroup;
-
-        window.onload = function() {
-            initSketchCanvas();
-            initThreeJS();
-            setupFileUpload();
-            switchTab(1);
-        };
-
-        function switchTab(tabNum) {
-            for (let i = 1; i <= 3; i++) {
-                const s = document.getElementById(`step${i}`);
-                const b = document.getElementById(`tabBtn${i}`);
-                if (s) s.classList.add('hidden');
-                if (b) {
-                    b.classList.remove('bg-accent', 'text-white', 'shadow');
-                    b.classList.add('text-slate-400', 'hover:text-white');
-                }
-            }
-            const activeStep = document.getElementById(`step${tabNum}`);
-            const activeBtn = document.getElementById(`tabBtn${tabNum}`);
-            if (activeStep) activeStep.classList.remove('hidden');
-            if (activeBtn) {
-                activeBtn.classList.add('bg-accent', 'text-white', 'shadow');
-                activeBtn.classList.remove('text-slate-400');
-            }
-
-            if (tabNum === 3) {
-                setTimeout(() => { onWindowResize(); }, 50);
-            }
+let shape='square',tool='pen',actions=[],redoStack=[],active=null,pointer=null,model=null,dirty=false,preview='stamp';
+if(window.lucide)lucide.createIcons();
+const mm=p=>({x:p.x*SIZE/canvas.width-SIZE/2,y:SIZE/2-p.y*SIZE/canvas.height});
+const px=p=>({x:(p.x+SIZE/2)*canvas.width/SIZE,y:(SIZE/2-p.y)*canvas.height/SIZE});
+const clamp=p=>({x:Math.max(-10,Math.min(10,p.x)),y:Math.max(-10,Math.min(10,p.y))});
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function point(e){const r=canvas.getBoundingClientRect();return clamp(mm({x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}));}
+// Сильная стабилизация: фильтр по расстоянию + многократное сглаживание кривой.
+function smooth(points){if(points.length<3)return points.slice();let p=points.slice();for(let pass=0;pass<4;pass++){let q=[p[0]];for(let i=1;i<p.length-1;i++)q.push({x:(p[i-1].x+4*p[i].x+p[i+1].x)/6,y:(p[i-1].y+4*p[i].y+p[i+1].y)/6});q.push(p.at(-1));p=q;}return p;}
+function path(points){if(!points.length)return;let p=smooth(points),first=px(p[0]);ctx.beginPath();ctx.moveTo(first.x,first.y);if(p.length===1){ctx.lineTo(first.x+.01,first.y);return;}for(let i=1;i<p.length;i++){let q=px(p[i]);ctx.lineTo(q.x,q.y);}}
+function ip(p){return {X:Math.round(p.x*SCALE),Y:Math.round(p.y*SCALE)};}
+function poly(points){return points.map(ip);}
+function offset(paths,delta,join=ClipperLib.JoinType.jtRound,end=ClipperLib.EndType.etOpenRound){const co=new ClipperLib.ClipperOffset(2,.025*SCALE);co.AddPaths(paths,join,end);const result=new ClipperLib.Paths();co.Execute(result,delta*SCALE);return result;}
+function boolean(subject,clip,kind){if(!subject.length)return [];const c=new ClipperLib.Clipper();c.AddPaths(subject,ClipperLib.PolyType.ptSubject,true);if(clip.length)c.AddPaths(clip,ClipperLib.PolyType.ptClip,true);const tree=new ClipperLib.PolyTree();c.Execute(kind,tree,ClipperLib.PolyFillType.pftNonZero,ClipperLib.PolyFillType.pftNonZero);return ClipperLib.Clipper.PolyTreeToPaths(tree);}
+function baseOutline(){if(shape==='square')return [poly([{x:-10+INSET,y:-10+INSET},{x:10-INSET,y:-10+INSET},{x:10-INSET,y:10-INSET},{x:-10+INSET,y:10-INSET}])];const p=[];for(let i=0;i<192;i++){let a=i*Math.PI*2/192;p.push({x:(10-INSET)*Math.cos(a),y:(10-INSET)*Math.sin(a)});}return [poly(p)];}
+function inside(p,ring){return ClipperLib.Clipper.PointInPolygon(ip(p),ring)!==0;}
+// Область заливки определяется геометрией ВСЕХ уже нарисованных линий, а не одним штрихом.
+function findFill(point,existing){const boundary=baseOutline(),voids=boolean(boundary,existing,ClipperLib.ClipType.ctDifference);const hits=voids.filter(r=>inside(point,r));if(!hits.length)return null;hits.sort((a,b)=>Math.abs(ClipperLib.Clipper.Area(a))-Math.abs(ClipperLib.Clipper.Area(b)));const chosen=hits[0];const border=boundary[0];if(Math.abs(ClipperLib.Clipper.Area(chosen))>Math.abs(ClipperLib.Clipper.Area(border))*.83)return null;return chosen;}
+function buildPaths(items){let result=[];for(const a of items){if(a.kind==='fill'){const region=findFill(a.point,result);if(region)result=boolean(result.concat([region]),[],ClipperLib.ClipType.ctUnion);continue;}const pts=a.points.length===1?[a.points[0],{x:a.points[0].x+.001,y:a.points[0].y}]:smooth(a.points);let outline=offset([poly(pts)],(a.kind==='erase'?2:WIDTH)/2);result=a.kind==='erase'?boolean(result,outline,ClipperLib.ClipType.ctDifference):boolean(result.concat(outline),[],ClipperLib.ClipType.ctUnion);}return boolean(result,baseOutline(),ClipperLib.ClipType.ctIntersection);}
+function draw(){ctx.fillStyle='#fff';ctx.fillRect(0,0,600,600);ctx.save();if(shape==='circle'){ctx.beginPath();ctx.arc(300,300,300,0,Math.PI*2);ctx.clip();}try{const paths=buildPaths([...actions,...(active?[active]:[])]);ctx.fillStyle='#111';ctx.beginPath();for(const ring of paths){if(ring.length<3)continue;const first=px({x:ring[0].X/SCALE,y:ring[0].Y/SCALE});ctx.moveTo(first.x,first.y);for(let i=1;i<ring.length;i++){let q=px({x:ring[i].X/SCALE,y:ring[i].Y/SCALE});ctx.lineTo(q.x,q.y);}ctx.closePath();}ctx.fill('evenodd');}catch(err){console.error(err);}ctx.restore();}
+function setTool(t){tool=t;for(const id of ['pen','fill','eraser'])$(id).classList.toggle('active',id===t);canvas.style.cursor=t==='pen'?'crosshair':t==='fill'?bucketCursor:'none';$('eraserCursor').style.display='none';}
+function setShape(s){shape=s;$('square').classList.toggle('active',s==='square');$('circle').classList.toggle('active',s==='circle');$('drawing').classList.toggle('circle',s==='circle');draw();schedule();}
+$('square').onclick=()=>setShape('square');$('circle').onclick=()=>setShape('circle');for(const t of ['pen','fill','eraser'])$(t).onclick=()=>setTool(t);
+$('undo').onclick=()=>{if(actions.length){redoStack.push(actions.pop());draw();schedule();}};$('redo').onclick=()=>{if(redoStack.length){actions.push(redoStack.pop());draw();schedule();}};$('clear').onclick=()=>{if(!actions.length&&!active)return;if(!window.confirm('Точно удалить весь текущий рисунок и начать заново?'))return;actions=[];redoStack=[];active=null;draw();schedule();};
+canvas.addEventListener('pointerdown',e=>{if(pointer!==null)return;e.preventDefault();pointer=e.pointerId;canvas.setPointerCapture(pointer);let p=point(e);if(tool==='fill'){if(!findFill(p,buildPaths(actions))){$('status').textContent='Коснись области, ограниченной линиями.';pointer=null;return;}actions.push({kind:'fill',point:p});redoStack=[];draw();schedule();pointer=null;return;}active={kind:tool==='eraser'?'erase':'stroke',points:[p]};draw();});
+canvas.addEventListener('pointermove',e=>{if(pointer!==e.pointerId||!active)return;e.preventDefault();const p=point(e),last=active.points.at(-1);if(dist(p,last)<.085)return;active.points.push(p);draw();});
+function finish(e){if(pointer!==e.pointerId)return;pointer=null;if(active){active.points=simplify(smooth(active.points),.035);actions.push(active);redoStack=[];active=null;draw();schedule();}}
+canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);const cursor=$('eraserCursor');canvas.addEventListener('pointermove',e=>{if(tool!=='eraser')return;const r=canvas.getBoundingClientRect(),d=2*r.width/SIZE;cursor.style.width=d+'px';cursor.style.height=d+'px';cursor.style.left=(e.clientX-r.left)+'px';cursor.style.top=(e.clientY-r.top)+'px';cursor.style.display='block';});canvas.addEventListener('pointerleave',()=>cursor.style.display='none');
+function simplify(pts,tol){if(pts.length<3)return pts;const result=[pts[0]];for(let i=1;i<pts.length-1;i++)if(dist(pts[i],result.at(-1))>tol)result.push(pts[i]);result.push(pts.at(-1));return result;}
+function contours(){return buildPaths(actions);}
+function shapesFromPaths(paths){const rings=paths.filter(p=>p.length>=3&&Math.abs(ClipperLib.Clipper.Area(p))>100).map(p=>({p,area:Math.abs(ClipperLib.Clipper.Area(p)),parent:-1,depth:0}));rings.sort((a,b)=>b.area-a.area);for(let i=0;i<rings.length;i++)for(let j=i-1;j>=0;j--)if(ClipperLib.Clipper.PointInPolygon(rings[i].p[0],rings[j].p)!==0){rings[i].parent=j;rings[i].depth=rings[j].depth+1;break;}
+const convert=p=>p.map(q=>new THREE.Vector2(-q.X/SCALE,q.Y/SCALE));const shapes=[];for(let i=0;i<rings.length;i++){if(rings[i].depth%2)continue;let s=new THREE.Shape(convert(rings[i].p));for(let j=0;j<rings.length;j++)if(rings[j].parent===i&&rings[j].depth%2)s.holes.push(new THREE.Path(convert(rings[j].p)));shapes.push(s);}return shapes;}
+if(!window.THREE||!window.ClipperLib){$('status').textContent='Не загрузились 3D-библиотеки. Проверь подключение к интернету и обнови страницу.';throw Error('Three.js / Clipper unavailable');}
+const viewer=$('viewer'),scene=new THREE.Scene();scene.background=new THREE.Color(0x080f1c);const camera=new THREE.PerspectiveCamera(40,1,.1,200);camera.up.set(0,0,1);camera.position.set(24,-29,24);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));viewer.appendChild(renderer.domElement);const controls=THREE.OrbitControls?new THREE.OrbitControls(camera,renderer.domElement):new class{constructor(cam,dom){this.cam=cam;this.dom=dom;this.target=new THREE.Vector3(0,0,2);this.minDistance=15;this.maxDistance=95;this.drag=null;this.pinch=null;dom.addEventListener('pointerdown',e=>{dom.setPointerCapture(e.pointerId);this.drag={x:e.clientX,y:e.clientY};});dom.addEventListener('pointermove',e=>{if(!this.drag)return;let dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;this.drag={x:e.clientX,y:e.clientY};const v=cam.position.clone().sub(this.target),s=new THREE.Spherical().setFromVector3(v);s.theta-=dx*.012;s.phi=Math.max(.08,Math.min(Math.PI-.08,s.phi-dy*.012));v.setFromSpherical(s);cam.position.copy(this.target).add(v);cam.lookAt(this.target);});dom.addEventListener('pointerup',()=>this.drag=null);dom.addEventListener('pointercancel',()=>this.drag=null);dom.addEventListener('wheel',e=>{e.preventDefault();const v=cam.position.clone().sub(this.target);v.multiplyScalar(Math.exp(e.deltaY*.001));v.clampLength(this.minDistance,this.maxDistance);cam.position.copy(this.target).add(v);cam.lookAt(this.target);},{passive:false});}update(){this.cam.lookAt(this.target);}}(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.09;controls.target.set(0,0,2);controls.minDistance=15;controls.maxDistance=95;controls.enablePan=false;controls.update();scene.add(new THREE.AmbientLight(0xffffff,.48));const light=new THREE.DirectionalLight(0xffffff,.92);scene.add(light);const cameraLightOffset=new THREE.Vector3(-.65,.8,1.5);const cameraLightWorld=new THREE.Vector3();scene.add(light.target);const material=new THREE.MeshStandardMaterial({color:0x879bb3,roughness:.48,metalness:.06});const raised=new THREE.MeshStandardMaterial({color:0x38bdf8,roughness:.5,metalness:.03});model=new THREE.Group();scene.add(model);const impressionGroup=new THREE.Group();scene.add(impressionGroup);const ceramic=new THREE.MeshStandardMaterial({color:0xd9c9b4,roughness:1,metalness:0});const ink=new THREE.MeshStandardMaterial({color:0xa28e79,roughness:1,metalness:0});
+// Оттиск — отдельная сцена. STL экспортирует только model, чайник и линейка не экспортируются.
+// Если библиотека Utah Teapot недоступна, показываем резервную модель чайника,
+// чтобы предпросмотр оставался работоспособным без дополнительной зависимости.
+const teapotGroup=new THREE.Group();impressionGroup.add(teapotGroup);
+const pottery=new THREE.MeshStandardMaterial({color:0xe7dfd2,roughness:.94,metalness:0,side:THREE.DoubleSide,emissive:0x3a332b,emissiveIntensity:.13});
+const recess=new THREE.MeshStandardMaterial({color:0xb9ac9b,roughness:1,metalness:0,side:THREE.DoubleSide});
+const groove=new THREE.MeshStandardMaterial({color:0x8e8172,roughness:1,metalness:0,side:THREE.DoubleSide});
+const scaleInk=new THREE.LineBasicMaterial({color:0xc8d1dd,transparent:true,opacity:.72});
+const footRadius=25; // Физический диаметр донышка: 50 мм.
+function makeTeapot(){
+  let body;
+  if(THREE.TeapotGeometry){
+    const g=new THREE.TeapotGeometry(25,12,true,true,true,true,true);
+    g.computeBoundingBox();
+    const low=g.boundingBox.min.y;
+    // Utah Teapot: геометрия ориентирована по Y, переносим основание в Z=0.
+    g.translate(0,-low,0);g.rotateX(Math.PI/2);
+    g.computeBoundingBox();
+    // Оцениваем диаметр нижней опорной окружности, а не ширину с носиком/ручкой.
+    const a=g.attributes.position;let radii=[];
+    for(let i=0;i<a.count;i++){const z=a.getZ(i);if(z>=0&&z<3)radii.push(Math.hypot(a.getX(i),a.getY(i)));}
+    radii.sort((x,y)=>x-y);const r=radii.length?radii[Math.floor(radii.length*.85)]:15;
+    const factor=footRadius/Math.max(r,1);g.scale(factor,factor,factor);
+    body=new THREE.Mesh(g,pottery);
+  }else{
+    // Резервный узнаваемый чайник: корпус, крышка, носик и ручка.
+    const profile=[[0,0],[25,0],[25,1.5],[26,4],[31,8],[36,15],[39,25],[39,38],[35,51],[28,60],[20,65],[17,67]];
+    const lathe=new THREE.LatheGeometry(profile.map(([r,z])=>new THREE.Vector2(r,z)),64);
+    lathe.rotateX(Math.PI/2);lathe.rotateZ(Math.PI/2); // преобразуем ось вращения Y в Z
+    body=new THREE.Mesh(lathe,pottery);
+    const lid=new THREE.Mesh(new THREE.CylinderGeometry(18,18,3,64),pottery);lid.rotation.x=Math.PI/2;lid.position.z=67;teapotGroup.add(lid);
+    const knob=new THREE.Mesh(new THREE.SphereGeometry(5,20,12),pottery);knob.position.z=72;teapotGroup.add(knob);
+    const handleCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(30,0,48),new THREE.Vector3(54,0,57),new THREE.Vector3(62,0,40),new THREE.Vector3(54,0,20),new THREE.Vector3(32,0,25)]);
+    teapotGroup.add(new THREE.Mesh(new THREE.TubeGeometry(handleCurve,64,5,10,false),pottery));
+    const spoutCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(-30,0,25),new THREE.Vector3(-45,0,29),new THREE.Vector3(-54,0,43),new THREE.Vector3(-59,0,51)]);
+    teapotGroup.add(new THREE.Mesh(new THREE.TubeGeometry(spoutCurve,48,5,12,false),pottery));
+  }
+  teapotGroup.add(body);
+  // Плоское керамическое донышко закрывает низ геометрии, создаёт фон для оттиска.
+  const bottom=new THREE.Mesh(new THREE.CircleGeometry(footRadius,192),pottery);
+  bottom.name='imprintSurface';bottom.position.z=-1.25;teapotGroup.add(bottom);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(footRadius-.9,.65,10,128),pottery);
+  rim.position.z=-1.30;teapotGroup.add(rim);
+}
+makeTeapot();
+// Сетка расположена ВНЕ чайника, в плоскости донышка, с делениями через 1 мм.
+const gridPoints=[];
+function segment(x1,y1,x2,y2){gridPoints.push(x1,y1,-.7,x2,y2,-.7);}
+for(let i=-40;i<=40;i+=1){
+  const major=i%10===0,medium=i%5===0;
+  const span=major?2.8:medium?1.8:.9;
+  segment(i,-39,i,-39+span);segment(i,39-span,i,39);
+  segment(-39,i,-39+span,i);segment(39-span,i,39,i);
+}
+segment(-39,-39,39,-39);segment(-39,39,39,39);segment(-39,-39,-39,39);segment(39,-39,39,39);
+const gridGeo=new THREE.BufferGeometry();gridGeo.setAttribute('position',new THREE.Float32BufferAttribute(gridPoints,3));
+impressionGroup.add(new THREE.LineSegments(gridGeo,scaleInk));
+// Подписи шкалы 0–3 см — текстура на прозрачной плоскости вне силуэта чайника.
+const rulerCanvas=document.createElement('canvas');rulerCanvas.width=1024;rulerCanvas.height=1024;
+const rc=rulerCanvas.getContext('2d');rc.clearRect(0,0,1024,1024);
+rc.strokeStyle='#e0e7ef';rc.fillStyle='#e0e7ef';rc.lineWidth=2;rc.font='27px system-ui';rc.textAlign='center';
+const mmPx=1024/86;
+for(let i=0;i<=30;i++){
+  const x=512+(i-15)*mmPx,y=945;
+  rc.beginPath();rc.moveTo(x,y);rc.lineTo(x,y-(i%10===0?21:i%5===0?13:7));rc.stroke();
+  if(i%10===0)rc.fillText(String(i/10),x,978);
+}
+rc.font='23px system-ui';rc.fillText('см',512+19*mmPx,978);
+const rulerTexture=new THREE.CanvasTexture(rulerCanvas);
+const ruler=new THREE.Mesh(new THREE.PlaneGeometry(86,86),new THREE.MeshBasicMaterial({map:rulerTexture,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
+ruler.position.z=-.85;impressionGroup.add(ruler);
+function setPreview(next){
+  preview=next;$('stampView').classList.toggle('active',next==='stamp');$('imprintView').classList.toggle('active',next==='imprint');
+  model.visible=next==='stamp';impressionGroup.visible=next==='imprint';
+  controls.target.set(0,0,next==='stamp'?2:15);
+  // Смотрим строго на донышко снаружи: при взгляде вдоль +Z экранная ось X
+  // обращена относительно мировой X. Это компенсирует зеркальность штампа.
+  camera.up.set(0,1,0);
+  if(next==='imprint')camera.position.set(0,0,-122);else {camera.up.set(0,0,1);camera.position.set(24,-29,24);}
+  controls.minDistance=next==='imprint'?52:15;controls.maxDistance=next==='imprint'?260:95;
+  controls.update();
+}
+$('stampView').onclick=()=>setPreview('stamp');$('imprintView').onclick=()=>setPreview('imprint');
+function rebuild(){
+  // Удаляем только изменяемую геометрию оттиска. Чайник, ободок и линейка остаются.
+  const old=teapotGroup.getObjectByName('imprintRelief');
+  if(old){teapotGroup.remove(old);old.traverse(o=>{if(o.geometry)o.geometry.dispose();});}
+  const previousSurface=teapotGroup.getObjectByName('imprintSurface');
+  if(previousSurface){teapotGroup.remove(previousSurface);previousSurface.geometry.dispose();}
+  while(model.children.length){const child=model.children[0];model.remove(child);child.geometry.dispose();}
+  let geo;if(shape==='square')geo=new THREE.BoxGeometry(SIZE,SIZE,BASE);
+  else{geo=new THREE.CylinderGeometry(10,10,BASE,192);geo.rotateX(Math.PI/2);}
+  geo.translate(0,0,BASE/2);model.add(new THREE.Mesh(geo,material));
+  try{
+    const paths=contours(),shapes=shapesFromPaths(paths);
+    if(shapes.length){
+      const relief=new THREE.ExtrudeGeometry(shapes,{depth:RELIEF+.02,bevelEnabled:false,curveSegments:16,steps:1});
+      relief.translate(0,0,BASE-.02);model.add(new THREE.Mesh(relief,raised));
+      // Штамп зеркальный, оттиск читается как исходный рисунок.
+      // Это настоящая выемка: передняя поверхность донышка имеет отверстия,
+      // в них видны углублённое дно и боковые стенки (а не накладные полоски).
+      const imprint=new THREE.Group();imprint.name='imprintRelief';
+      const raw=shapesFromPaths(paths);
+      const frontZ=-1.25, floorZ=-.82;
+      // Контуры штампа зеркальны в мировых координатах. Камера смотрит
+      // на донышко снизу и отражает X на экране: дополнительных scale(-1) НЕ нужно.
+      const visibleShapes=raw.map(sh=>sh.clone());
+      const floorGeo=new THREE.ShapeGeometry(visibleShapes,24);
+      floorGeo.translate(0,0,floorZ);
+      imprint.add(new THREE.Mesh(floorGeo,recess));
+      // Вырезаем контуры из керамического донышка геометрическим булевым вычитанием.
+      // Поскольку вычитаем всё сразу, соседние линии и заливки не стирают друг друга.
+      const circle=[];
+      for(let i=0;i<256;i++){
+        const a=i*2*Math.PI/256;
+        circle.push(ip({x:footRadius*Math.cos(a),y:footRadius*Math.sin(a)}));
+      }
+      const remaining=boolean([circle],paths,ClipperLib.ClipType.ctDifference);
+      const surfaceShapes=shapesFromPaths(remaining);
+      const surfaceGeo=new THREE.ShapeGeometry(surfaceShapes,24);
+      surfaceGeo.translate(0,0,frontZ);
+      const surface=new THREE.Mesh(surfaceGeo,pottery);
+      surface.name='imprintSurface';teapotGroup.add(surface);
+      // Обе стороны каждой границы соединяем стенкой: это создаёт видимую
+      // глубину, параллакс и собственное затенение при вращении OrbitControls.
+      const verts=[];
+      for(const sh of raw){
+        const boundaries=[sh.getPoints(64),...sh.holes.map(h=>h.getPoints(64))];
+        for(const contour of boundaries){
+          for(let i=0;i<contour.length;i++){
+            const p=contour[i],q=contour[(i+1)%contour.length];
+            if(p.distanceToSquared(q)<1e-10)continue;
+            const x=p.x,y=p.y,X=q.x,Y=q.y;
+            verts.push(x,y,frontZ,X,Y,frontZ,X,Y,floorZ,
+                       x,y,frontZ,X,Y,floorZ,x,y,floorZ);
+          }
         }
-
-        function setMode(mode) {
-            currentMode = mode;
-            const drawBtn = document.getElementById('modeDrawBtn');
-            const uploadBtn = document.getElementById('modeUploadBtn');
-            const drawC = document.getElementById('drawContainer');
-            const uploadC = document.getElementById('uploadContainer');
-            if (mode === 'draw') {
-                drawBtn.className = "py-2 text-xs font-medium rounded-lg bg-accent text-white transition";
-                uploadBtn.className = "py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-white transition";
-                drawC.classList.remove('hidden');
-                uploadC.classList.add('hidden');
-            } else {
-                uploadBtn.className = "py-2 text-xs font-medium rounded-lg bg-accent text-white transition";
-                drawBtn.className = "py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-white transition";
-                uploadC.classList.remove('hidden');
-                drawC.classList.add('hidden');
-            }
-        }
-
-        function initSketchCanvas() {
-            resizeSketchCanvas();
-            window.addEventListener('resize', resizeSketchCanvas);
-
-            sketchCanvas.addEventListener('mousedown', startDraw);
-            sketchCanvas.addEventListener('mousemove', draw);
-            sketchCanvas.addEventListener('mouseup', stopDraw);
-            sketchCanvas.addEventListener('mouseleave', stopDraw);
-
-            sketchCanvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const t = e.touches[0];
-                const r = sketchCanvas.getBoundingClientRect();
-                lastX = t.clientX - r.left;
-                lastY = t.clientY - r.top;
-                isDrawing = true;
-            }, { passive: false });
-
-            sketchCanvas.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                if (!isDrawing) return;
-                const t = e.touches[0];
-                const r = sketchCanvas.getBoundingClientRect();
-                const x = t.clientX - r.left;
-                const y = t.clientY - r.top;
-                sketchCtx.beginPath();
-                sketchCtx.moveTo(lastX, lastY);
-                sketchCtx.lineTo(x, y);
-                sketchCtx.stroke();
-                lastX = x; lastY = y;
-            }, { passive: false });
-
-            sketchCanvas.addEventListener('touchend', () => { isDrawing = false; });
-
-            sketchCtx.fillStyle = '#FFFFFF';
-            sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-            sketchCtx.strokeStyle = '#000000';
-            sketchCtx.lineWidth = 5;
-            sketchCtx.lineCap = 'round';
-            sketchCtx.lineJoin = 'round';
-        }
-
-        function resizeSketchCanvas() {
-            const temp = document.createElement('canvas');
-            temp.width = sketchCanvas.width || 400;
-            temp.height = sketchCanvas.height || 192;
-            temp.getContext('2d').drawImage(sketchCanvas, 0, 0);
-
-            const rect = sketchCanvas.parentElement.getBoundingClientRect();
-            sketchCanvas.width = rect.width || 400;
-            sketchCanvas.height = 192;
-
-            sketchCtx.fillStyle = '#FFFFFF';
-            sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-            sketchCtx.drawImage(temp, 0, 0, temp.width, temp.height, 0, 0, sketchCanvas.width, sketchCanvas.height);
-
-            sketchCtx.strokeStyle = '#000000';
-            sketchCtx.lineWidth = 5;
-            sketchCtx.lineCap = 'round';
-            sketchCtx.lineJoin = 'round';
-        }
-
-        function startDraw(e) {
-            isDrawing = true;
-            const r = sketchCanvas.getBoundingClientRect();
-            lastX = e.clientX - r.left;
-            lastY = e.clientY - r.top;
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            const r = sketchCanvas.getBoundingClientRect();
-            const x = e.clientX - r.left;
-            const y = e.clientY - r.top;
-            sketchCtx.beginPath();
-            sketchCtx.moveTo(lastX, lastY);
-            sketchCtx.lineTo(x, y);
-            sketchCtx.stroke();
-            lastX = x; lastY = y;
-        }
-
-        function stopDraw() { isDrawing = false; }
-
-        function clearSketch() {
-            sketchCtx.fillStyle = '#FFFFFF';
-            sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-        }
-
-        function setupFileUpload() {
-            document.getElementById('imageLoader').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const img = new Image();
-                    img.onload = function() {
-                        sourceImage = img;
-                        processAndMoveToStep2();
-                    };
-                    img.src = evt.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function processAndMoveToStep2() {
-            if (currentMode === 'draw') {
-                sourceImage = new Image();
-                sourceImage.src = sketchCanvas.toDataURL();
-            }
-            if (!sourceImage) {
-                sourceImage = new Image();
-                sourceImage.src = sketchCanvas.toDataURL();
-            }
-            setTimeout(() => {
-                updateVectorization();
-                switchTab(2);
-            }, 50);
-        }
-
-        function updateVectorization() {
-            const threshold = parseInt(document.getElementById('thresholdRange').value);
-            const mirror = document.getElementById('mirrorCheck').checked;
-            document.getElementById('thresholdVal').innerText = threshold;
-
-            const workCanvas = document.createElement('canvas');
-            const w = 300, h = 300;
-            workCanvas.width = w;
-            workCanvas.height = h;
-            const ctx = workCanvas.getContext('2d');
-
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, w, h);
-            ctx.save();
-            if (mirror) {
-                ctx.translate(w, 0);
-                ctx.scale(-1, 1);
-            }
-            ctx.drawImage(sourceImage, 20, 20, w - 40, h - 40);
-            ctx.restore();
-
-            const imgData = ctx.getImageData(0, 0, w, h);
-            const data = imgData.data;
-            const grid = new Uint8Array(w * h);
-
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
-                    const idx = (y * w + x) * 4;
-                    const avg = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    grid[y * w + x] = avg < threshold ? 1 : 0;
-                }
-            }
-
-            vectorPolylines = extractVectorPolylines(grid, w, h);
-            renderSVGPreview();
-        }
-
-        function extractVectorPolylines(grid, w, h) {
-            const visited = new Uint8Array(w * h);
-            const polylines = [];
-            const step = 3;
-
-            for (let y = 5; y < h - 5; y += step) {
-                for (let x = 5; x < w - 5; x += step) {
-                    if (grid[y * w + x] === 1 && !visited[y * w + x]) {
-                        let currentPath = [];
-                        let queue = [[x, y]];
-                        visited[y * w + x] = 1;
-
-                        while (queue.length > 0 && currentPath.length < 300) {
-                            let [cx, cy] = queue.pop();
-                            currentPath.push({x: cx, y: cy});
-
-                            const neighbors = [
-                                [cx + step, cy], [cx - step, cy],
-                                [cx, cy + step], [cx, cy - step],
-                                [cx + step, cy + step], [cx - step, cy - step],
-                                [cx + step, cy - step], [cx - step, cy + step]
-                            ];
-
-                            for (let [nx, ny] of neighbors) {
-                                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
-                                    if (grid[ny * w + nx] === 1 && !visited[ny * w + nx]) {
-                                        visited[ny * w + nx] = 1;
-                                        queue.push([nx, ny]);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (currentPath.length > 3) {
-                            const smoothed = smoothPath(currentPath, 2);
-                            polylines.push(smoothed);
-                        }
-                    }
-                }
-            }
-            return polylines;
-        }
-
-        function smoothPath(path, passes) {
-            let res = path;
-            for (let p = 0; p < passes; p++) {
-                let temp = [];
-                for (let i = 0; i < res.length; i++) {
-                    let prev = res[Math.max(0, i - 1)];
-                    let curr = res[i];
-                    let next = res[Math.min(res.length - 1, i + 1)];
-                    temp.push({
-                        x: (prev.x + curr.x * 2 + next.x) / 4,
-                        y: (prev.y + curr.y * 2 + next.y) / 4
-                    });
-                }
-                res = temp;
-            }
-            return res;
-        }
-
-        function renderSVGPreview() {
-            const svgGroup = document.getElementById('svgPathsGroup');
-            svgGroup.innerHTML = '';
-            let totalPoints = 0;
-
-            vectorPolylines.forEach(poly => {
-                if (poly.length < 2) return;
-                let d = `M ${poly[0].x} ${poly[0].y}`;
-                for (let i = 1; i < poly.length; i++) {
-                    d += ` L ${poly[i].x} ${poly[i].y}`;
-                }
-                totalPoints += poly.length;
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', d);
-                path.setAttribute('stroke', '#0284c7');
-                path.setAttribute('stroke-width', '4');
-                path.setAttribute('fill', 'none');
-                path.setAttribute('stroke-linecap', 'round');
-                path.setAttribute('stroke-linejoin', 'round');
-                svgGroup.appendChild(path);
-            });
-
-            document.getElementById('vectorStats').innerText = `${vectorPolylines.length} контуров (${totalPoints} точек)`;
-        }
-
-        function initThreeJS() {
-            const container = document.getElementById('canvas3dContainer');
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x060913);
-
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, -55, 40);
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-
-            const ambient = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambient);
-
-            const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
-            dir1.position.set(20, -30, 50);
-            scene.add(dir1);
-
-            const dir2 = new THREE.DirectionalLight(0x0284c7, 0.4);
-            dir2.position.set(-20, 30, -30);
-            scene.add(dir2);
-
-            const grid = new THREE.GridHelper(80, 20, 0x0284c7, 0x1e293b);
-            grid.rotation.x = Math.PI / 2;
-            scene.add(grid);
-
-            window.addEventListener('resize', onWindowResize);
-            animateThree();
-        }
-
-        function onWindowResize() {
-            const container = document.getElementById('canvas3dContainer');
-            if (!container) return;
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-
-        function animateThree() {
-            requestAnimationFrame(animateThree);
-            controls.update();
-            renderer.render(scene, camera);
-        }
-
-        function resetCamera() {
-            camera.position.set(0, -55, 40);
-            controls.target.set(0, 0, 0);
-            controls.update();
-        }
-
-        function build3DAndMoveToStep3() {
-            const loading = document.getElementById('loadingOverlay');
-            loading.classList.remove('hidden');
-
-            setTimeout(() => {
-                try {
-                    buildStampMesh();
-                    switchTab(3);
-                } catch (e) {
-                    console.error(e);
-                    alert("Ошибка при построении 3D модели.");
-                } finally {
-                    loading.classList.add('hidden');
-                }
-            }, 100);
-        }
-
-        function buildStampMesh() {
-            const reliefH = parseFloat(document.getElementById('reliefHeight').value) || 2.4;
-            const baseH = parseFloat(document.getElementById('baseThickness').value) || 3.0;
-            const shape = document.getElementById('stampShape').value;
-            const physicalSize = 24.0;
-            const halfS = physicalSize / 2;
-            const baseZ = -baseH;
-
-            const baseGeometry = new THREE.BufferGeometry();
-            const reliefGeometry = new THREE.BufferGeometry();
-
-            const baseVerts = [], baseNorms = [];
-            const reliefVerts = [], reliefNorms = [];
-
-            function addTri(geomVerts, geomNorms, p1, p2, p3) {
-                geomVerts.push(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], p3[0], p3[1], p3[2]);
-                const vA = new THREE.Vector3(...p1);
-                const vB = new THREE.Vector3(...p2);
-                const vC = new THREE.Vector3(...p3);
-                const cb = new THREE.Vector3().subVectors(vC, vB);
-                const ab = new THREE.Vector3().subVectors(vA, vB);
-                cb.cross(ab).normalize();
-                geomNorms.push(cb.x, cb.y, cb.z, cb.x, cb.y, cb.z, cb.x, cb.y, cb.z);
-            }
-
-            if (shape === 'circle') {
-                const segs = 48;
-                const r = halfS + 1.2;
-                for (let i = 0; i < segs; i++) {
-                    const t1 = (i / segs) * Math.PI * 2;
-                    const t2 = ((i + 1) / segs) * Math.PI * 2;
-                    const x1 = Math.cos(t1) * r, y1 = Math.sin(t1) * r;
-                    const x2 = Math.cos(t2) * r, y2 = Math.sin(t2) * r;
-
-                    addTri(baseVerts, baseNorms, [0,0,baseZ], [x2,y2,baseZ], [x1,y1,baseZ]);
-                    addTri(baseVerts, baseNorms, [0,0,0], [x1,y1,0], [x2,y2,0]);
-                    addTri(baseVerts, baseNorms, [x1,y1,baseZ], [x2,y2,baseZ], [x2,y2,0]);
-                    addTri(baseVerts, baseNorms, [x1,y1,baseZ], [x2,y2,0], [x1,y1,0]);
-                }
-            } else {
-                const bw = halfS + 1.2;
-                const bh = halfS + 1.2;
-                const b_bl = [-bw, -bh, baseZ], b_br = [bw, -bh, baseZ], b_tr = [bw, bh, baseZ], b_tl = [-bw, bh, baseZ];
-                const t_bl = [-bw, -bh, 0], t_br = [bw, -bh, 0], t_tr = [bw, bh, 0], t_tl = [-bw, bh, 0];
-
-                addTri(baseVerts, baseNorms, b_bl, b_br, b_tr);
-                addTri(baseVerts, baseNorms, b_bl, b_tr, b_tl);
-                addTri(baseVerts, baseNorms, t_bl, t_tr, t_br);
-                addTri(baseVerts, baseNorms, t_bl, t_tl, t_tr);
-                addTri(baseVerts, baseNorms, b_bl, b_br, t_br); addTri(baseVerts, baseNorms, b_bl, t_br, t_bl);
-                addTri(baseVerts, baseNorms, b_br, b_tr, t_tr); addTri(baseVerts, baseNorms, b_br, t_tr, t_br);
-                addTri(baseVerts, baseNorms, b_tr, b_tl, t_tl); addTri(baseVerts, baseNorms, b_tr, t_tl, t_tr);
-                addTri(baseVerts, baseNorms, b_tl, b_bl, t_bl); addTri(baseVerts, baseNorms, b_tl, t_bl, t_tl);
-            }
-
-            const minLineWidthMM = 0.6;
-            const svgW = 300, svgH = 300;
-
-            vectorPolylines.forEach(poly => {
-                for (let i = 0; i < poly.length - 1; i++) {
-                    const pA = poly[i];
-                    const pB = poly[i+1];
-
-                    const x0 = (pA.x / svgW) * physicalSize - halfS;
-                    const y0 = ((svgH - pA.y) / svgH) * physicalSize - halfS;
-                    const x1 = (pB.x / svgW) * physicalSize - halfS;
-                    const y1 = ((svgH - pB.y) / svgH) * physicalSize - halfS;
-
-                    const dx = x1 - x0;
-                    const dy = y1 - y0;
-                    const len = Math.sqrt(dx*dx + dy*dy);
-                    if (len < 0.05) continue;
-
-                    const nx = (-dy / len) * (minLineWidthMM / 2);
-                    const ny = (dx / len) * (minLineWidthMM / 2);
-
-                    const v1 = [x0 + nx, y0 + ny, 0];
-                    const v2 = [x0 - nx, y0 - ny, 0];
-                    const v3 = [x1 - nx, y1 - ny, 0];
-                    const v4 = [x1 + nx, y1 + ny, 0];
-
-                    const t1 = [x0 + nx, y0 + ny, reliefH];
-                    const t2 = [x0 - nx, y0 - ny, reliefH];
-                    const t3 = [x1 - nx, y1 - ny, reliefH];
-                    const t4 = [x1 + nx, y1 + ny, reliefH];
-
-                    addTri(reliefVerts, reliefNorms, t1, t3, t2);
-                    addTri(reliefVerts, reliefNorms, t1, t4, t3);
-
-                    addTri(reliefVerts, reliefNorms, v1, v2, t2); addTri(reliefVerts, reliefNorms, v1, t2, t1);
-                    addTri(reliefVerts, reliefNorms, v2, v3, t3); addTri(reliefVerts, reliefNorms, v2, t3, t2);
-                    addTri(reliefVerts, reliefNorms, v3, v4, t4); addTri(reliefVerts, reliefNorms, v3, t4, t3);
-                    addTri(reliefVerts, reliefNorms, v4, v1, t1); addTri(reliefVerts, reliefNorms, v4, t1, t4);
-                }
-            });
-
-            baseGeometry.setAttribute('position', new THREE.Float32BufferAttribute(baseVerts, 3));
-            baseGeometry.setAttribute('normal', new THREE.Float32BufferAttribute(baseNorms, 3));
-
-            reliefGeometry.setAttribute('position', new THREE.Float32BufferAttribute(reliefVerts, 3));
-            reliefGeometry.setAttribute('normal', new THREE.Float32BufferAttribute(reliefNorms, 3));
-
-            if (stampGroup) scene.remove(stampGroup);
-            stampGroup = new THREE.Group();
-
-            const baseMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.5, metalness: 0.1 });
-            const reliefMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3, metalness: 0.1 });
-
-            stampGroup.add(new THREE.Mesh(baseGeometry, baseMat));
-            stampGroup.add(new THREE.Mesh(reliefGeometry, reliefMat));
-            scene.add(stampGroup);
-
-            const triCount = (baseVerts.length + reliefVerts.length) / 9;
-            document.getElementById('statTriangles').innerText = triCount.toLocaleString();
-
-            generatedSTL = generateSTLString(baseVerts, baseNorms, reliefVerts, reliefNorms);
-        }
-
-        function generateSTLString(v1, n1, v2, n2) {
-            let stl = "solid VectorStamp24\n";
-            function append(verts, norms) {
-                for (let i = 0; i < verts.length; i += 9) {
-                    const nx = norms[i], ny = norms[i+1], nz = norms[i+2];
-                    stl += `  facet normal ${nx} ${ny} ${nz}\n`;
-                    stl += "    outer loop\n";
-                    stl += `      vertex ${verts[i]} ${verts[i+1]} ${verts[i+2]}\n`;
-                    stl += `      vertex ${verts[i+3]} ${verts[i+4]} ${verts[i+5]}\n`;
-                    stl += `      vertex ${verts[i+6]} ${verts[i+7]} ${verts[i+8]}\n`;
-                    stl += "    endloop\n";
-                    stl += "  endfacet\n";
-                }
-            }
-            append(v1, n1);
-            append(v2, n2);
-            stl += "endsolid VectorStamp24\n";
-            return stl;
-        }
-
-        function downloadSTL() {
-            if (!generatedSTL) {
-                alert("Сначала постройте 3D модель!");
-                return;
-            }
-            const blob = new Blob([generatedSTL], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'vector_stamp_24x24.stl';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-</body>
-</html>
+      }
+      if(verts.length){
+        const wallGeo=new THREE.BufferGeometry();
+        wallGeo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+        wallGeo.computeVertexNormals();
+        imprint.add(new THREE.Mesh(wallGeo,groove));
+      }
+      teapotGroup.add(imprint);
+    }
+    if(!shapes.length){const clean=new THREE.Mesh(new THREE.CircleGeometry(footRadius,192),pottery);clean.position.z=-1.25;clean.name='imprintSurface';teapotGroup.add(clean);}
+    $('status').textContent=shapes.length?'Модель готова':'Нарисуй что-нибудь';
+  }catch(e){console.error(e);$('status').textContent='Не удалось построить контур. Попробуй отменить последнее действие.';}
+}
+function schedule(){if(dirty)return;dirty=true;requestAnimationFrame(()=>{dirty=false;rebuild();});}
+function resize(){const w=viewer.clientWidth||280,h=viewer.clientHeight||280;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);}if(window.ResizeObserver)new ResizeObserver(resize).observe(viewer);else window.addEventListener('resize',resize);resize();function animate(){requestAnimationFrame(animate);controls.update();
+// Единственный направленный свет следует за камерой: сверху слева на экране.
+// Дополнительных источников при появлении оттиска не создаём.
+light.position.copy(camera.position).add(cameraLightWorld.copy(cameraLightOffset).applyQuaternion(camera.quaternion).multiplyScalar(35));
+light.target.position.copy(controls.target);light.target.updateMatrixWorld();renderer.render(scene,camera);}animate();
+
+function download(){rebuild();model.updateMatrixWorld(true);const chunks=[];let count=0;const normal=new THREE.Vector3(),ab=new THREE.Vector3(),ac=new THREE.Vector3();for(const mesh of model.children){const g=mesh.geometry,position=g.getAttribute('position'),index=g.index;const n=index?index.count:position.count;for(let i=0;i<n;i+=3){const a=new THREE.Vector3().fromBufferAttribute(position,index?index.getX(i):i).applyMatrix4(mesh.matrixWorld);const b=new THREE.Vector3().fromBufferAttribute(position,index?index.getX(i+1):i+1).applyMatrix4(mesh.matrixWorld);const c=new THREE.Vector3().fromBufferAttribute(position,index?index.getX(i+2):i+2).applyMatrix4(mesh.matrixWorld);normal.copy(ab.subVectors(b,a)).cross(ac.subVectors(c,a)).normalize();chunks.push([normal,a,b,c]);count++;}}const buffer=new ArrayBuffer(84+count*50),view=new DataView(buffer);view.setUint32(80,count,true);let o=84;for(const tri of chunks){for(const v of tri)for(const x of [v.x,v.y,v.z]){view.setFloat32(o,x,true);o+=4;}view.setUint16(o,0,true);o+=2;}const url=URL.createObjectURL(new Blob([buffer],{type:'model/stl'}));const a=document.createElement('a');a.href=url;a.download=`anykey_stamp_${shape}_20x20x5.4.stl`;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);$('status').textContent='STL скачан. Открой его в слайсере.';}
+$('download').onclick=download;
+const orderModal=$('orderModal');
+function setModal(open){orderModal.classList.toggle('open',open);orderModal.setAttribute('aria-hidden',String(!open));if(open)$('closeModal').focus();else $('order').focus();}
+$('order').onclick=()=>setModal(true);
+$('closeModal').onclick=()=>setModal(false);
+orderModal.addEventListener('click',e=>{if(e.target===orderModal)setModal(false);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&orderModal.classList.contains('open'))setModal(false);});
+draw();rebuild();setPreview('stamp');
+</script>
+</body></html>
