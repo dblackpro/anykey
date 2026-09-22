@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор штампов</title>
+    <title>Any-Key.[click!] — Генератор штампов 24x24 мм</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        h1 { font-size: 1.5rem; margin-bottom: 20px; font-weight: 600; color: #38bdf8; text-align: center; }
+        
+        /* Any-Key Branding */
+        .brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; background: #1e293b; padding: 8px 16px; border-radius: 20px; border: 1px solid #334155; }
+        .brand-title { font-weight: 700; font-size: 1rem; color: #38bdf8; letter-spacing: 0.5px; }
+        .brand-action { background: #0284c7; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+
+        h1 { font-size: 1.3rem; margin-bottom: 20px; font-weight: 600; color: #94a3b8; text-align: center; }
+        
         .container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; width: 100%; justify-content: center; }
         .panel { background: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; }
         .panel h2 { font-size: 1.1rem; margin-bottom: 12px; color: #94a3b8; }
@@ -33,7 +40,11 @@
 </head>
 <body>
 
-    <h1>Генератор штампов</h1>
+    <div class="brand-header">
+        <span class="brand-title">Any-Key</span>
+        <span class="brand-action">click!</span>
+    </div>
+    <h1>Генератор штампов 24×24 мм (STL + G-Code)</h1>
     
     <div class="container">
         <!-- Панель рисования -->
@@ -64,8 +75,8 @@
                 </div>
             </div>
 
-            <button class="primary" onclick="generateSTL()">Скачать STL</button>
-            <button class="primary" style="background:#059669;" onclick="generateGCode()">Скачать G-Code (3D печать PLA)</button>
+            <button class="primary" onclick="generateSTL()">Скачать STL (3D печать)</button>
+            <button class="primary" style="background:#059669;" onclick="generateGCode()">Скачать G-Code (PLA)</button>
         </div>
     </div>
 
@@ -89,7 +100,6 @@
     canvas.addEventListener('mouseup', stopDraw);
     canvas.addEventListener('mouseleave', stopDraw);
 
-    // Поддержка сенсорных экранов
     canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
     canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
     canvas.addEventListener('touchend', stopDraw);
@@ -115,7 +125,7 @@
         ctx.save();
         if (currentTool === 'eraser') {
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 20;
+            ctx.lineWidth = 24;
         } else {
             ctx.strokeStyle = '#000000';
             ctx.lineWidth = 6;
@@ -169,7 +179,7 @@
     let stampGroup = new THREE.Group();
     scene.add(stampGroup);
 
-    // Материалы для визуального разделения (единый цвет при экспорте решим на уровне геометрии)
+    // Материалы для визуального разделения в браузере
     const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.4 }); // серый
     const reliefMaterial = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3 }); // синий
 
@@ -183,7 +193,7 @@
         const baseH = 3.0;   // Высота основания
         const reliefH = 1.5; // Высота рельефа
 
-        // 1. Создаем основание
+        // 1. Основание
         let baseGeo;
         if (shapeType === 'square') {
             baseGeo = new THREE.BoxGeometry(sizeMM, sizeMM, baseH);
@@ -195,33 +205,27 @@
         const baseMesh = new THREE.Mesh(baseGeo, baseMaterial);
         stampGroup.add(baseMesh);
 
-        // 2. Обработка рисунка и создание рельефа
+        // 2. Рельеф из рукописного ввода
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imgData.data;
         const w = canvas.width;
         const h = canvas.height;
 
-        // Упрощенный макет выдавливания активных пикселей черного цвета
-        const step = 6; // Шаг дискретизации для производительности
-        const pixelSizeMM = sizeMM / w * step;
-
+        const step = 4; // Плотность дискретизации
+        const pixelSizeMM = (sizeMM / w) * step;
         const reliefGroup = new THREE.Group();
         const boxGeom = new THREE.BoxGeometry(pixelSizeMM, pixelSizeMM, reliefH);
 
         for (let y = 0; y < h; y += step) {
             for (let x = 0; x < w; x += step) {
                 const idx = (y * w + x) * 4;
-                const r = data[idx];
-                const g = data[idx+1];
-                const b = data[idx+2];
-                // Если пиксель темный (нарисовано пером)
-                if ((r + g + b) / 3 < 128) {
-                    // Переводите координаты холста в миллиметры (-12 до 12 мм)
+                // Проверяем темноту пикселя (инверсия Y исправлена)
+                if (data[idx] < 128) {
                     const mmX = (x - w / 2) * (sizeMM / w);
-                    const mmY = (h / y - 1) * (sizeMM / h); // инверсия Y
+                    const mmY = (h / 2 - y) * (sizeMM / h);
 
                     const cloneGeom = boxGeom.clone();
-                    cloneGeom.translate(mmX, -mmY, baseH + reliefH / 2);
+                    cloneGeom.translate(mmX, mmY, baseH + reliefH / 2);
                     const pMesh = new THREE.Mesh(cloneGeom, reliefMaterial);
                     reliefGroup.add(pMesh);
                 }
@@ -230,15 +234,12 @@
         stampGroup.add(reliefGroup);
     }
 
-    // Анимация вращения сцены
     function animate() {
         requestAnimationFrame(animate);
         stampGroup.rotation.z += 0.005;
         renderer.render(scene, camera);
     }
     animate();
-
-    // Первичный запуск построения
     updateModel();
 
     // --- Экспорт STL ---
@@ -292,10 +293,9 @@
         gcode += "M83 ; Relative extruder positioning\n";
         gcode += "G1 Z5 F3000\n";
         
-        // Базовые параметры слайсера
         let z = 0.2;
         const layerHeight = 0.2;
-        const totalHeight = 4.5; // 3mm база + 1.5mm рельеф
+        const totalHeight = 4.5;
 
         while (z <= totalHeight) {
             gcode += `\n; --- Layer Z=${z.toFixed(2)} ---\n`;
